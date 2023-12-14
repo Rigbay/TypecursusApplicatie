@@ -2,9 +2,9 @@
 
 namespace TypecursusApplicatie
 {
-    public partial class Inlogpagina : Window
+    public partial class Registratiepagina : Window
     {
-        public Inlogpagina()
+        public Registratiepagina()
         {
             InitializeComponent();
         }
@@ -22,7 +22,6 @@ namespace TypecursusApplicatie
             registratiepagina.Show();
             this.Close();
         }
-
 
         private void SidebarToggle_Click(object sender, RoutedEventArgs e)
         {
