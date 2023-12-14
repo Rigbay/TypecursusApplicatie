@@ -108,16 +108,27 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Business Logic Layer\" />
-    <Folder Include="Data Access Layer\" />
-    <Folder Include="Images\" />
-    <Folder Include="Models\" />
-    <Folder Include="Resources\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="User Interface\Logo1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Business Logic Layer\TextFile1.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Data Access Layer\TextFile1.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\TextFile1.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Models\TextFile1.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\TextFile1.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Services\TextFile1.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
