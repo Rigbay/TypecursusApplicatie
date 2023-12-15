@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using TypecursusApplicatie.Data_Access_Layer;
+using TypecursusApplicatie.Models;
 
 namespace TypecursusApplicatie
 {
@@ -58,5 +60,21 @@ namespace TypecursusApplicatie
         {
             mainWindow.LoadHomeControl();
         }
+
+        private void TestDatabase_Click(object sender, RoutedEventArgs e)
+        {
+            GebruikerDAL gebruikerDAL = new GebruikerDAL();
+            Gebruiker gebruiker = gebruikerDAL.GetGebruiker(1); // Veronderstelt dat er een gebruiker is met ID 1
+
+            if (gebruiker != null)
+            {
+                MessageBox.Show($"Gebruiker gevonden: {gebruiker.Voornaam} {gebruiker.Achternaam}");
+            }
+            else
+            {
+                MessageBox.Show("Gebruiker niet gevonden.");
+            }
+        }
+
     }
 }
