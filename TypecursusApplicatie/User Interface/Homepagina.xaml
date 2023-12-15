@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="TypecursusApplicatie.Inlogpagina"
+﻿<UserControl x:Class="TypecursusApplicatie.Homepagina"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -27,6 +27,10 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="10"/>
         </Style>
+        <Style x:Key="HomeButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="180"/>
+            <Setter Property="Margin" Value="10"/>
+        </Style>
     </UserControl.Resources>
 
     <DockPanel>
@@ -40,7 +44,7 @@
 
         <DockPanel x:Name="Sidebar" DockPanel.Dock="Left" Background="Gray" Width="0">
             <StackPanel DockPanel.Dock="Top">
-                <Button Content="Home" Style="{StaticResource SidebarButtonStyle}" Click="HomeButton_Click" Width="100" HorizontalAlignment="Center"/>
+                <Button Content="Home" Style="{StaticResource HomeButtonStyle}" Click="HomeButton_Click" Width="100" HorizontalAlignment="Center"/>
                 <ComboBox Width="180" Margin="10">
                     <ComboBoxItem Content="Level 1"/>
                     <ComboBoxItem Content="Level 2"/>
@@ -66,15 +70,18 @@
         </DockPanel>
 
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock Text="Inloggen" FontSize="26" FontWeight="Bold" Margin="0,0,0,20"/>
-            <StackPanel Width="300">
-                <Label Content="E-mailadres:"/>
-                <TextBox x:Name="txtEmail" Height="30"/>
-                <Label Content="Wachtwoord:"/>
-                <PasswordBox x:Name="txtPassword" Height="30" Margin="0,10,0,10"/>
-                <Button Content="Inloggen" Height="30" Click="LoginButton_Click"/>
-                <Button Content="Registreren" Style="{StaticResource LinkButtonStyle}" Height="30" Margin="0,10,0,0" Click="RegisterButton_Click"/>
-            </StackPanel>
+            <TextBlock Text="Homepagina" FontSize="30" FontWeight="Bold" Margin="0,20,0,20"/>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Height="500" Width="800">
+                <TextBlock TextWrapping="Wrap" 
+                           Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ultricies varius aliquet. Proin id ex dictum, vulputate justo ac, feugiat ligula. Cras laoreet consectetur libero id luctus. Morbi eget porttitor libero. Vestibulum lobortis gravida porta. Duis et sollicitudin libero, et mattis magna. Mauris at erat interdum, blandit lacus nec, eleifend arcu. Curabitur sit amet diam dapibus dolor venenatis pharetra. Suspendisse congue dui non odio semper pulvinar. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In lectus mi, cursus nec sapien nec, tempus malesuada dui.
+
+Aliquam mollis elit eget ipsum mollis, sit amet vestibulum neque eleifend. Nunc id magna nec sapien pretium tempus eu ac odio. Nam nec neque sed urna eleifend imperdiet nec a nibh. Nulla vestibulum tellus ligula, a sollicitudin massa commodo id. In id ligula sit amet dui euismod auctor id id purus. Etiam ornare augue urna. Aliquam non velit eu erat semper elementum. Maecenas ut dolor ornare, molestie nulla vitae, ultricies tortor. Sed ultricies bibendum porta. Nam non libero vel est molestie accumsan non a nibh.
+
+Quisque non urna est. Vivamus porttitor massa neque, eu vehicula dui ullamcorper vel. Quisque vel dui odio. Sed convallis sagittis sapien et varius. Maecenas cursus diam ac nisl sollicitudin, vel dapibus risus vestibulum. Integer nec vehicula velit. Morbi id facilisis turpis. Donec lacinia ex ut dolor blandit, a varius dui volutpat. Donec commodo justo nec nunc consectetur, vitae maximus ante consectetur. Duis commodo mauris volutpat elit condimentum cursus. Nam ac sapien ligula. Donec quis nulla porta, feugiat nisi ut, tristique nibh." />
+            </ScrollViewer>
+
+            <Button Content="Naar Levels" Height="30" Width="200" Click="LevelsPagina_Click"/>
         </StackPanel>
     </DockPanel>
 </UserControl>

@@ -4,29 +4,30 @@ using System.Windows.Input;
 
 namespace TypecursusApplicatie
 {
-    public partial class Registratiepagina : UserControl
+    public partial class Homepagina : UserControl
     {
         private MainWindow mainWindow;
 
-        public Registratiepagina()
+        public Homepagina()
         {
             InitializeComponent();
-            this.Loaded += Registratiepagina_Loaded;
+            this.Loaded += Homepagina_Loaded;
         }
 
-        public Registratiepagina(MainWindow mainWindow)
+        public Homepagina(MainWindow mainWindow)
         {
             InitializeComponent();
             this.mainWindow = mainWindow;
         }
 
-        private void Registratiepagina_Loaded(object sender, RoutedEventArgs e)
+        private void Homepagina_Loaded(object sender, RoutedEventArgs e)
         {
             if (this.DataContext is MainWindow main)
             {
                 mainWindow = main;
             }
         }
+
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             mainWindow.LoadLoginControl();
@@ -34,8 +35,13 @@ namespace TypecursusApplicatie
 
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
-            // Hier komt de logica voor het registreren
-            // Bij succes, navigeer naar een andere pagina of update de UI
+            mainWindow.LoadRegisterControl();
+
+        }
+
+        private void LevelsPagina_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.LoadLevelsControl();
         }
 
         private void SidebarToggle_Click(object sender, RoutedEventArgs e)

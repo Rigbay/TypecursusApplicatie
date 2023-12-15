@@ -2,8 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:TypecursusApplicatie"
-             StartupUri="User Interface/Inlogpagina.xaml">
+             StartupUri="MainWindow.xaml">
     <Application.Resources>
-
+        <!-- Je applicatie resources hier -->
     </Application.Resources>
 </Application>

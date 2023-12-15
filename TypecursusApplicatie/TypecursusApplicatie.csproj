@@ -58,6 +58,12 @@
     <Compile Include="User Interface\Inlogpagina.xaml.cs">
       <DependentUpon>Inlogpagina.xaml</DependentUpon>
     </Compile>
+    <Compile Include="User Interface\Homepagina.xaml.cs">
+      <DependentUpon>Homepagina.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="User Interface\Levelspagina.xaml.cs">
+      <DependentUpon>Levelspagina.xaml</DependentUpon>
+    </Compile>
     <Compile Include="User Interface\Registratiepagina.xaml.cs">
       <DependentUpon>Registratiepagina.xaml</DependentUpon>
     </Compile>
@@ -74,6 +80,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="User Interface\Inlogpagina.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="User Interface\Homepagina.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="User Interface\Levelspagina.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -110,7 +124,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Resource Include="User Interface\Logo1.png" />
+    <Resource Include="Images\Logo1.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Business Logic Layer\TextFile1.txt" />
