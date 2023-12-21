@@ -20,7 +20,9 @@ namespace TypecursusApplicatie
         {
             InitializeComponent();
             this.mainWindow = mainWindow;
+            this.DataContext = mainWindow;
         }
+
 
         private void Homepagina_Loaded(object sender, RoutedEventArgs e)
         {
@@ -33,6 +35,11 @@ namespace TypecursusApplicatie
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             mainWindow.LoadLoginControl();
+        }
+
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.LogoutUser();
         }
 
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
@@ -59,21 +66,6 @@ namespace TypecursusApplicatie
         private void Logo_Click(object sender, MouseButtonEventArgs e)
         {
             mainWindow.LoadHomeControl();
-        }
-
-        private void TestDatabase_Click(object sender, RoutedEventArgs e)
-        {
-            GebruikerDAL gebruikerDAL = new GebruikerDAL();
-            Gebruiker gebruiker = gebruikerDAL.GetGebruiker(1); // Veronderstelt dat er een gebruiker is met ID 1
-
-            if (gebruiker != null)
-            {
-                MessageBox.Show($"Gebruiker gevonden: {gebruiker.Voornaam} {gebruiker.Achternaam}");
-            }
-            else
-            {
-                MessageBox.Show("Gebruiker niet gevonden.");
-            }
         }
 
     }

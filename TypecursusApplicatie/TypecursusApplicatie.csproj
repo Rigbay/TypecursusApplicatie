@@ -117,6 +117,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Business Logic Layer\UserSession.cs" />
     <Compile Include="Data Access Layer\GebruikerDAL.cs" />
     <Compile Include="Data Access Layer\DatabaseContext.cs" />
     <Compile Include="Models\DataModels.cs" />
@@ -191,9 +192,6 @@
   <ItemGroup />
   <ItemGroup>
     <Resource Include="Images\Logo1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Business Logic Layer\TextFile1.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\TextFile1.txt" />
