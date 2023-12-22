@@ -5,6 +5,7 @@ using TypecursusApplicatie.Data_Access_Layer;
 using TypecursusApplicatie.BusinessLogicLayer;
 using TypecursusApplicatie.Models;
 using System.Windows.Media.Animation;
+using System.Linq;
 
 namespace TypecursusApplicatie
 {
@@ -16,17 +17,10 @@ namespace TypecursusApplicatie
         {
             InitializeComponent();
             this.Loaded += Inlogpagina_Loaded;
-            this.PreviewKeyDown += Inlogpagina_PreviewKeyDown;
             this.mainWindow = mainWindow;
             this.DataContext = mainWindow;
-
             txtEmail.KeyDown += TxtEmail_KeyDown;
             txtPassword.KeyDown += TxtPassword_KeyDown;
-        }
-        private void Inlogpagina_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-                LoginButton_Click(this, new RoutedEventArgs());
         }
         private void TxtEmail_KeyDown(object sender, KeyEventArgs e)
         {
@@ -38,6 +32,14 @@ namespace TypecursusApplicatie
         {
             if (e.Key == Key.Enter)
                 LoginButton_Click(this, new RoutedEventArgs());
+        }
+
+        private void UserControl_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                LoginButton_Click(this, new RoutedEventArgs());
+            }
         }
 
         public Inlogpagina(MainWindow mainWindow)
@@ -57,22 +59,29 @@ namespace TypecursusApplicatie
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            GebruikerDAL gebruikerDAL = new GebruikerDAL();
             string email = txtEmail.Text;
             string ingevoerdeWachtwoord = txtPassword.Password;
 
+            if (!IsEmailValid(email))
+            {
+                MessageBox.Show("Ongeldig e-mailadres.");
+                return;
+            }
+
+            if (!IsPasswordValid(ingevoerdeWachtwoord))
+            {
+                MessageBox.Show("Wachtwoord moet minstens 8 tekens lang zijn en zowel letters als cijfers bevatten.");
+                return;
+            }
+
+            GebruikerDAL gebruikerDAL = new GebruikerDAL();
             Gebruiker gebruiker = gebruikerDAL.GetGebruikerByEmail(email);
 
-            // Hash het ingevoerde wachtwoord en vergelijk het met het gehashte wachtwoord in de database
             if (gebruiker != null && GebruikerDAL.HashWachtwoord(ingevoerdeWachtwoord) == gebruiker.Wachtwoord)
             {
-                // Stel de ingelogde gebruiker in op de gebruikerssessie
                 UserSession.Login(gebruiker);
-
                 MessageBox.Show("Succesvol ingelogd!");
                 mainWindow.LoadHomeControl();
-
-                // Update de IsUserLoggedIn property in MainWindow
                 mainWindow.OnPropertyChanged(nameof(mainWindow.IsUserLoggedIn));
             }
             else
@@ -80,6 +89,15 @@ namespace TypecursusApplicatie
                 MessageBox.Show("Onjuiste inloggegevens.");
             }
         }
+
+        private void InlogButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(mainWindow.MainContent.Content is Inlogpagina))
+            {
+                mainWindow.LoadLoginControl();
+            }
+        }
+
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
@@ -99,20 +117,23 @@ namespace TypecursusApplicatie
 
         private void HomeButton_Click(object sender, RoutedEventArgs e)
         {
-            // Controleer of de huidige pagina al de Inlogpagina is
-            if (mainWindow.MainContent.Content is Inlogpagina)
-            {
-                return; // Als dat zo is, doe niets
-            }
-
-            // Zo niet, navigeer naar de inlogpagina
-            mainWindow.LoadLoginControl();
+            mainWindow.LoadHomeControl();
         }
-
 
         private void Logo_Click(object sender, MouseButtonEventArgs e)
         {
             mainWindow.LoadHomeControl(); 
         }
+        private bool IsEmailValid(string email)
+        {
+            var regex = new System.Text.RegularExpressions.Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+            return regex.IsMatch(email);
+        }
+
+        private bool IsPasswordValid(string password)
+        {
+            return password.Length >= 8 && password.Any(char.IsDigit) && password.Any(char.IsLetter);
+        }
+
     }
 }

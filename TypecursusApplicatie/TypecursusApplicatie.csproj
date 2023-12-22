@@ -194,9 +194,6 @@
     <Resource Include="Images\Logo1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\TextFile1.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\TextFile1.txt" />
   </ItemGroup>
   <ItemGroup>

@@ -66,8 +66,9 @@
                 <StackPanel x:Name="LoggedOutPanel" Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}" Orientation="Horizontal">
                     <Button Content="Inloggen" 
                             Style="{StaticResource SidebarButtonStyle}" 
-                            Click="LoginButton_Click" 
+                            Click="InlogButton_Click" 
                             Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
+
                     <Button Content="Registreren" 
                             Style="{StaticResource SidebarButtonStyle}" 
                             Click="RegisterButton_Click" 

@@ -19,6 +19,11 @@ namespace TypecursusApplicatie
 
         public bool IsNotLoggedIn => !IsUserLoggedIn;
 
+        public bool IsCurrentPageLogin()
+        {
+            return MainContent.Content is Inlogpagina;
+        }
+
         public void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -36,7 +41,7 @@ namespace TypecursusApplicatie
 
         public void LoadLevelsControl()
         {
-            MainContent.Content = new Levelspagina();
+            MainContent.Content = new Levelspagina(this);
         }
 
         public void LoadHomeControl()

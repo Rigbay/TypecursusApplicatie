@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TypecursusApplicatie.Data_Access_Layer;
@@ -43,26 +44,60 @@ namespace TypecursusApplicatie
 
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
+            string voornaam = txtVoornaam.Text;
+            string achternaam = txtAchternaam.Text;
+            string email = txtEmailReg.Text;
+            string wachtwoord = txtPasswordReg.Password;
+
+            if (string.IsNullOrWhiteSpace(voornaam) || string.IsNullOrWhiteSpace(achternaam))
+            {
+                MessageBox.Show("Voornaam en achternaam zijn verplicht.");
+                return;
+            }
+
+            if (!IsEmailValid(email))
+            {
+                MessageBox.Show("Ongeldig e-mailadres.");
+                return;
+            }
+
+            if (!IsPasswordValid(wachtwoord))
+            {
+                MessageBox.Show("Wachtwoord moet minstens 8 tekens lang zijn en zowel letters als cijfers bevatten.");
+                return;
+            }
+
             GebruikerDAL gebruikerDAL = new GebruikerDAL();
-
-            // Hier moet je de waarden uit je registratieformulier halen
-            // Bijvoorbeeld: string email = txtEmailReg.Text; 
-            string email = txtEmailReg.Text; // Vervang door juiste TextBox naam
-            string wachtwoord = txtPasswordReg.Password; // Vervang door juiste PasswordBox naam
-            string voornaam = txtVoornaam.Text; // Vervang door juiste TextBox naam
-            string achternaam = txtAchternaam.Text; // Vervang door juiste TextBox naam
-
             Gebruiker nieuweGebruiker = new Gebruiker
             {
                 Voornaam = voornaam,
                 Achternaam = achternaam,
                 Emailadres = email,
-                Wachtwoord = wachtwoord // Overweeg hashing voor wachtwoordbeveiliging
+                Wachtwoord = GebruikerDAL.HashWachtwoord(wachtwoord)
             };
 
             gebruikerDAL.AddGebruiker(nieuweGebruiker);
             MessageBox.Show("Registratie succesvol!");
             mainWindow.LoadLoginControl();
+        }
+
+        private bool IsEmailValid(string email)
+        {
+            var regex = new System.Text.RegularExpressions.Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+            return regex.IsMatch(email);
+        }
+
+        private bool IsPasswordValid(string password)
+        {
+            return password.Length >= 8 && password.Any(char.IsDigit) && password.Any(char.IsLetter);
+        }
+
+        private void RegistratieButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(mainWindow.MainContent.Content is Registratiepagina))
+            {
+                mainWindow.LoadRegisterControl();
+            }
         }
 
         private void SidebarToggle_Click(object sender, RoutedEventArgs e)

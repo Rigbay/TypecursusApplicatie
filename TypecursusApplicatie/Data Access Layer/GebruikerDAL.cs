@@ -3,7 +3,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using TypecursusApplicatie.Models;
-using System.Security.Cryptography;
+using System.Collections.Generic;
 
 namespace TypecursusApplicatie.Data_Access_Layer
 {
@@ -16,10 +16,55 @@ namespace TypecursusApplicatie.Data_Access_Layer
             connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Typecursusdatabase"].ConnectionString;
         }
 
-       
+        public List<LevelVoortgang> GetGebruikersVoortgangPerLevel(int gebruikersID)
+        {
+            List<LevelVoortgang> voortgangslijst = new List<LevelVoortgang>();
 
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                string query = @"
+                SELECT l.LevelID, l.LevelNaam, COUNT(m.ModuleID) AS TotaalModules, 
+                       SUM(CASE WHEN gv.ModuleVoltooid THEN 1 ELSE 0 END) AS VoltooideModules
+                FROM Levels l
+                JOIN Modules m ON l.LevelID = m.LevelID
+                LEFT JOIN GebruikersVoortgang gv ON m.ModuleID = gv.ModuleID AND gv.GebruikersID = @GebruikersID
+                GROUP BY l.LevelID";
 
-    public static string HashWachtwoord(string wachtwoord)
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@GebruikersID", gebruikersID);
+
+                try
+                {
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int levelID = Convert.ToInt32(reader["LevelID"]);
+                            string levelNaam = reader["LevelNaam"].ToString();
+                            int totaalModules = Convert.ToInt32(reader["TotaalModules"]);
+                            int voltooideModules = Convert.ToInt32(reader["VoltooideModules"]);
+
+                            int voortgang = totaalModules > 0 ? (voltooideModules * 100 / totaalModules) : 0;
+
+                            voortgangslijst.Add(new LevelVoortgang
+                            {
+                                LevelID = levelID,
+                                LevelNaam = levelNaam,
+                                Voortgang = voortgang
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Fout bij het ophalen van de voortgang per level: " + ex.Message);
+                }
+            }
+            return voortgangslijst;
+        }
+
+        public static string HashWachtwoord(string wachtwoord)
     {
         using (SHA256 sha256 = SHA256.Create())
         {

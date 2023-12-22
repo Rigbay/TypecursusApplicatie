@@ -70,8 +70,9 @@
                             Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
                     <Button Content="Registreren" 
                             Style="{StaticResource SidebarButtonStyle}" 
-                            Click="RegisterButton_Click" 
+                            Click="RegistratieButton_Click" 
                             Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
+
                 </StackPanel>
             </StackPanel>
         </DockPanel>

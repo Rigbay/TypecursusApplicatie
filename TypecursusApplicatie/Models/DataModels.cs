@@ -107,4 +107,11 @@ namespace TypecursusApplicatie.Models
         public virtual Gebruiker Gebruiker { get; set; }
         public virtual Badge Badge { get; set; }
     }
+
+    public class LevelVoortgang
+    {
+        public int LevelID { get; set; }
+        public string LevelNaam { get; set; }
+        public int Voortgang { get; set; }
+    }
 }
