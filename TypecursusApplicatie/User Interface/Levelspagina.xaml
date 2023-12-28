@@ -38,8 +38,7 @@
             </DockPanel>
         </Border>
 
-
-        <DockPanel x:Name="Sidebar" DockPanel.Dock="Left" Background="Gray" Width="0">
+        <DockPanel x:Name="Sidebar" DockPanel.Dock="Left" Background="Gray" Width="250">
             <StackPanel DockPanel.Dock="Top">
                 <Button Content="Home" Style="{StaticResource SidebarButtonStyle}" Click="HomeButton_Click" Width="100" HorizontalAlignment="Center"/>
                 <ComboBox Width="180" Margin="10">
@@ -56,48 +55,52 @@
 
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10">
                 <StackPanel x:Name="LoggedInPanel" Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVisConverter}}" Orientation="Horizontal">
-                    <Button Content="Account" 
-                    Style="{StaticResource SidebarButtonStyle}" 
-                    Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
-                    <Button Content="Uitloggen" 
-                    Style="{StaticResource SidebarButtonStyle}" 
-                    Click="LogoutButton_Click" 
-                    Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
+                    <Button Content="Account" Style="{StaticResource SidebarButtonStyle}" Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
+                    <Button Content="Uitloggen" Style="{StaticResource SidebarButtonStyle}" Click="LogoutButton_Click" Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
                 </StackPanel>
                 <StackPanel x:Name="LoggedOutPanel" Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}" Orientation="Horizontal">
-                    <Button Content="Inloggen" 
-                    Style="{StaticResource SidebarButtonStyle}" 
-                    Click="LoginButton_Click" 
-                    Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
-                    <Button Content="Registreren" 
-                    Style="{StaticResource SidebarButtonStyle}" 
-                    Click="RegisterButton_Click" 
-                    Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
+                    <Button Content="Inloggen" Style="{StaticResource SidebarButtonStyle}" Click="LoginButton_Click" Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
+                    <Button Content="Registreren" Style="{StaticResource SidebarButtonStyle}" Click="RegisterButton_Click" Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
                 </StackPanel>
             </StackPanel>
         </DockPanel>
 
+        <Grid DockPanel.Dock="Top" VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <!-- Inhoud van de Level-overzichtspagina -->
-        <Grid DockPanel.Dock="Top">
-            <!-- Tegels voor elk level -->
-            <ItemsControl x:Name="LevelsItemsControl" ItemsSource="{Binding levelsMetVoortgang}">
+            <TextBlock Grid.Row="0" Text="Levelspagina" FontSize="26" FontWeight="Bold" Margin="20" HorizontalAlignment="Center"/>
+
+            <ItemsControl Grid.Row="1">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal"/>
+                        <!-- Zorg voor een breedte die vier tegels kan bevatten -->
+                        <WrapPanel Orientation="Horizontal" ItemWidth="200" ItemHeight="120" HorizontalAlignment="Center" VerticalAlignment="Top" MaxWidth="820"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="10" Padding="10" Background="LightGray" CornerRadius="5">
+                        <Border Margin="10" Padding="20" CornerRadius="10" Background="LightGray" Width="200" Height="120">
                             <StackPanel>
-                                <TextBlock Text="{Binding LevelNaam}" FontWeight="Bold"/>
-                                <ProgressBar Value="{Binding Voortgang}" Maximum="100"/>
+                                <TextBlock Text="{Binding}" FontWeight="Bold" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
+
+                <ItemsControl.Items>
+                    <sys:String>Level 1</sys:String>
+                    <sys:String>Level 2</sys:String>
+                    <sys:String>Level 3</sys:String>
+                    <sys:String>Level 4</sys:String>
+                    <sys:String>Level 5</sys:String>
+                    <sys:String>Level 6</sys:String>
+                    <sys:String>Level 7</sys:String>
+                    <sys:String>Level 8</sys:String>
+                </ItemsControl.Items>
             </ItemsControl>
         </Grid>
     </DockPanel>

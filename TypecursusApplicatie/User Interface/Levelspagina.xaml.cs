@@ -6,13 +6,14 @@ using TypecursusApplicatie.Data_Access_Layer;
 using TypecursusApplicatie.BusinessLogicLayer;
 using TypecursusApplicatie.Models;
 using System.Windows.Input;
+using System.Diagnostics;
 
 namespace TypecursusApplicatie
 {
     public partial class Levelspagina : UserControl
     {
         private MainWindow mainWindow;
-        private ObservableCollection<LevelVoortgang> levelsMetVoortgang;
+        public ObservableCollection<LevelVoortgang> levelsMetVoortgang;
 
         public Levelspagina(MainWindow mainWindow)
         {
@@ -20,14 +21,19 @@ namespace TypecursusApplicatie
             this.mainWindow = mainWindow;
             levelsMetVoortgang = new ObservableCollection<LevelVoortgang>();
             this.DataContext = this;
+            this.Loaded += new RoutedEventHandler(Levelspagina_Loaded);
         }
 
         private void Levelspagina_Loaded(object sender, RoutedEventArgs e)
         {
+
+            Debug.WriteLine("Levelspagina Loaded");
+            
             if (UserSession.IsLoggedIn())
             {
                 GebruikerDAL gebruikerDAL = new GebruikerDAL();
                 var gebruikersVoortgang = gebruikerDAL.GetGebruikersVoortgangPerLevel(UserSession.CurrentUser.GebruikersID);
+                levelsMetVoortgang.Clear();
 
                 foreach (var levelVoortgang in gebruikersVoortgang)
                 {
@@ -39,6 +45,7 @@ namespace TypecursusApplicatie
                 MessageBox.Show("U moet ingelogd zijn om deze pagina te bekijken.");
                 mainWindow.LoadLoginControl();
             }
+            Debug.WriteLine($"Aantal levels: {levelsMetVoortgang.Count}");
         }
 
 
