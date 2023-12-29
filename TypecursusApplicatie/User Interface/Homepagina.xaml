@@ -34,17 +34,16 @@
         </Style>
     </UserControl.Resources>
 
-    <DockPanel>
-        <Border DockPanel.Dock="Top" Background="Gray" Height="60">
+    <Grid>
+        <Border Background="Gray" Height="60" VerticalAlignment="Top">
             <DockPanel HorizontalAlignment="Stretch">
-                <ToggleButton x:Name="SidebarToggle" Content="☰" Width="60" Height="60" DockPanel.Dock="Left" Click="SidebarToggle_Click"/>
+                <ToggleButton x:Name="SidebarToggle" Content="☰" Width="60" Height="60" Click="SidebarToggle_Click"/>
                 <Image Source="/Images/Logo1.png" Width="60" Height="60" DockPanel.Dock="Right" HorizontalAlignment="Right" MouseDown="Logo_Click"/>
             </DockPanel>
         </Border>
 
-
-        <DockPanel x:Name="Sidebar" DockPanel.Dock="Left" Background="Gray" Width="0">
-            <StackPanel DockPanel.Dock="Top">
+        <Border x:Name="Sidebar" Background="Gray" Width="250" HorizontalAlignment="Left" Visibility="Collapsed">
+            <StackPanel>
                 <Button Content="Home" Style="{StaticResource HomeButtonStyle}" Click="HomeButton_Click" Width="100" HorizontalAlignment="Center"/>
                 <ComboBox Width="180" Margin="10">
                     <ComboBoxItem Content="Level 1"/>
@@ -56,30 +55,16 @@
                     <ComboBoxItem Content="Level 7"/>
                     <ComboBoxItem Content="Level 8"/>
                 </ComboBox>
-            </StackPanel>
-
-            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10">
                 <StackPanel x:Name="LoggedInPanel" Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVisConverter}}" Orientation="Horizontal">
-                    <Button Content="Account" 
-                            Style="{StaticResource SidebarButtonStyle}" 
-                            Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
-                    <Button Content="Uitloggen" 
-                            Style="{StaticResource SidebarButtonStyle}" 
-                            Click="LogoutButton_Click" 
-                            Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
+                    <Button Content="Account" Style="{StaticResource SidebarButtonStyle}" Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
+                    <Button Content="Uitloggen" Style="{StaticResource SidebarButtonStyle}" Click="LogoutButton_Click" Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
                 </StackPanel>
                 <StackPanel x:Name="LoggedOutPanel" Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}" Orientation="Horizontal">
-                    <Button Content="Inloggen" 
-                            Style="{StaticResource SidebarButtonStyle}" 
-                            Click="LoginButton_Click" 
-                            Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
-                    <Button Content="Registreren" 
-                            Style="{StaticResource SidebarButtonStyle}" 
-                            Click="RegisterButton_Click" 
-                            Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
+                    <Button Content="Inloggen" Style="{StaticResource SidebarButtonStyle}" Click="LoginButton_Click" Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
+                    <Button Content="Registreren" Style="{StaticResource SidebarButtonStyle}" Click="RegisterButton_Click" Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
                 </StackPanel>
             </StackPanel>
-        </DockPanel>
+        </Border>
 
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock Text="Homepagina" FontSize="30" FontWeight="Bold" Margin="0,20,0,20" HorizontalAlignment="Center"/>
@@ -96,5 +81,5 @@ Quisque non urna est. Vivamus porttitor massa neque, eu vehicula dui ullamcorper
             <Button Content="Naar Levels" Height="30" Width="200" Click="LevelsPagina_Click"/>
 
         </StackPanel>
-    </DockPanel>
+    </Grid>
 </UserControl>

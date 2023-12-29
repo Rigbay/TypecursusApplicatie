@@ -5,7 +5,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib">
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             Loaded="UserControl_Loaded">
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
@@ -71,36 +72,27 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Text="Levelspagina" FontSize="26" FontWeight="Bold" Margin="20" HorizontalAlignment="Center"/>
+            <TextBlock Grid.Row="0" Text="Levelspagina" FontSize="30" FontWeight="Bold" Margin="20" HorizontalAlignment="Center"/>
 
-            <ItemsControl Grid.Row="1">
+            <ItemsControl x:Name="LevelsItemsControl" Grid.Row="1" ItemsSource="{Binding Levels}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <!-- Zorg voor een breedte die vier tegels kan bevatten -->
-                        <WrapPanel Orientation="Horizontal" ItemWidth="200" ItemHeight="120" HorizontalAlignment="Center" VerticalAlignment="Top" MaxWidth="820"/>
+                        <!-- Aangepaste WrapPanel met grotere ItemWidth en ItemHeight voor grotere tegels -->
+                        <WrapPanel Orientation="Horizontal" ItemWidth="400" ItemHeight="300" HorizontalAlignment="Center" VerticalAlignment="Top"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="10" Padding="20" CornerRadius="10" Background="LightGray" Width="200" Height="120">
+                        <!-- Aangepaste Border met kleinere Margin voor duidelijke randen -->
+                        <Border Margin="0" Padding="50" CornerRadius="15" Background="LightGray" Width="350" Height="200">
                             <StackPanel>
-                                <TextBlock Text="{Binding}" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding LevelNaam}" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding VoortgangDisplay}" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
-
-                <ItemsControl.Items>
-                    <sys:String>Level 1</sys:String>
-                    <sys:String>Level 2</sys:String>
-                    <sys:String>Level 3</sys:String>
-                    <sys:String>Level 4</sys:String>
-                    <sys:String>Level 5</sys:String>
-                    <sys:String>Level 6</sys:String>
-                    <sys:String>Level 7</sys:String>
-                    <sys:String>Level 8</sys:String>
-                </ItemsControl.Items>
             </ItemsControl>
         </Grid>
     </DockPanel>

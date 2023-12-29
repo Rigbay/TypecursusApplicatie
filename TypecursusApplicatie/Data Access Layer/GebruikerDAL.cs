@@ -16,22 +16,14 @@ namespace TypecursusApplicatie.Data_Access_Layer
             connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Typecursusdatabase"].ConnectionString;
         }
 
-        public List<LevelVoortgang> GetGebruikersVoortgangPerLevel(int gebruikersID)
+        public List<Level> GetAllLevels()
         {
-            List<LevelVoortgang> voortgangslijst = new List<LevelVoortgang>();
+            List<Level> levels = new List<Level>();
 
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
-                string query = @"
-                SELECT l.LevelID, l.LevelNaam, COUNT(m.ModuleID) AS TotaalModules, 
-                       SUM(CASE WHEN gv.ModuleVoltooid THEN 1 ELSE 0 END) AS VoltooideModules
-                FROM Levels l
-                JOIN Modules m ON l.LevelID = m.LevelID
-                LEFT JOIN GebruikersVoortgang gv ON m.ModuleID = gv.ModuleID AND gv.GebruikersID = @GebruikersID
-                GROUP BY l.LevelID";
-
+                string query = "SELECT LevelID, LevelNaam FROM Levels";
                 MySqlCommand cmd = new MySqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@GebruikersID", gebruikersID);
 
                 try
                 {
@@ -40,28 +32,20 @@ namespace TypecursusApplicatie.Data_Access_Layer
                     {
                         while (reader.Read())
                         {
-                            int levelID = Convert.ToInt32(reader["LevelID"]);
-                            string levelNaam = reader["LevelNaam"].ToString();
-                            int totaalModules = Convert.ToInt32(reader["TotaalModules"]);
-                            int voltooideModules = Convert.ToInt32(reader["VoltooideModules"]);
-
-                            int voortgang = totaalModules > 0 ? (voltooideModules * 100 / totaalModules) : 0;
-
-                            voortgangslijst.Add(new LevelVoortgang
+                            levels.Add(new Level
                             {
-                                LevelID = levelID,
-                                LevelNaam = levelNaam,
-                                Voortgang = voortgang
+                                LevelID = Convert.ToInt32(reader["LevelID"]),
+                                LevelNaam = reader["LevelNaam"].ToString()
                             });
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Fout bij het ophalen van de voortgang per level: " + ex.Message);
+                    Console.WriteLine("Fout bij het ophalen van alle levels: " + ex.Message);
                 }
             }
-            return voortgangslijst;
+            return levels;
         }
 
         public static string HashWachtwoord(string wachtwoord)

@@ -13,39 +13,39 @@ namespace TypecursusApplicatie
     public partial class Levelspagina : UserControl
     {
         private MainWindow mainWindow;
-        public ObservableCollection<LevelVoortgang> levelsMetVoortgang;
+        public ObservableCollection<Level> Levels { get; private set; }
 
         public Levelspagina(MainWindow mainWindow)
         {
             InitializeComponent();
             this.mainWindow = mainWindow;
-            levelsMetVoortgang = new ObservableCollection<LevelVoortgang>();
+            Levels = new ObservableCollection<Level>();
             this.DataContext = this;
-            this.Loaded += new RoutedEventHandler(Levelspagina_Loaded);
         }
 
-        private void Levelspagina_Loaded(object sender, RoutedEventArgs e)
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-
-            Debug.WriteLine("Levelspagina Loaded");
-            
             if (UserSession.IsLoggedIn())
             {
-                GebruikerDAL gebruikerDAL = new GebruikerDAL();
-                var gebruikersVoortgang = gebruikerDAL.GetGebruikersVoortgangPerLevel(UserSession.CurrentUser.GebruikersID);
-                levelsMetVoortgang.Clear();
-
-                foreach (var levelVoortgang in gebruikersVoortgang)
-                {
-                    levelsMetVoortgang.Add(levelVoortgang);
-                }
+                LoadLevels();
             }
             else
             {
                 MessageBox.Show("U moet ingelogd zijn om deze pagina te bekijken.");
                 mainWindow.LoadLoginControl();
             }
-            Debug.WriteLine($"Aantal levels: {levelsMetVoortgang.Count}");
+        }
+
+        private void LoadLevels()
+        {
+            GebruikerDAL gebruikerDAL = new GebruikerDAL();
+            var alleLevels = gebruikerDAL.GetAllLevels();
+            Levels.Clear();
+
+            foreach (var level in alleLevels)
+            {
+                Levels.Add(level);
+            }
         }
 
 
