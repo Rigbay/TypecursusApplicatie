@@ -1,5 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
+using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using TypecursusApplicatie.Models;
@@ -58,7 +59,55 @@ namespace TypecursusApplicatie.Data_Access_Layer
     }
 
 
-    public void AddGebruiker(Gebruiker nieuweGebruiker)
+        public int GetProgressForLevel(int userId, int levelId)
+        {
+            int progressPercentage = 0;
+
+            try
+            {
+                using (var conn = new MySqlConnection(connectionString))
+                {
+                    conn.Open();
+                    // Replace this query with one that suits your database schema
+                    var query = @"SELECT COUNT(*) AS CompletedModules,
+                                (SELECT COUNT(*) FROM Modules WHERE LevelID = @LevelID) AS TotalModules
+                                FROM GebruikersVoortgang
+                                INNER JOIN Modules ON GebruikersVoortgang.ModuleID = Modules.ModuleID
+                                WHERE GebruikersVoortgang.GebruikersID = @UserID AND Modules.LevelID = @LevelID AND GebruikersVoortgang.ModuleVoltooid = TRUE;
+";
+
+                    using (var cmd = new MySqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@UserID", userId);
+                        cmd.Parameters.AddWithValue("@LevelID", levelId);
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                int completedModules = reader.GetInt32("CompletedModules");
+                                int totalModules = reader.GetInt32("TotalModules");
+
+                                if (totalModules > 0)
+                                {
+                                    progressPercentage = (completedModules * 100) / totalModules;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in GetProgressForLevel: " + ex.Message);
+                // Handle exception as needed
+            }
+
+            return progressPercentage;
+        }
+
+
+public void AddGebruiker(Gebruiker nieuweGebruiker)
         {
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {

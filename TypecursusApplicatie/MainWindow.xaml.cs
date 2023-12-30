@@ -10,6 +10,7 @@ namespace TypecursusApplicatie
         {
             InitializeComponent();
             this.DataContext = this;
+            this.WindowState = WindowState.Maximized;
             LoadLoginControl();
         }
 

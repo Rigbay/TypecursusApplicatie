@@ -6,7 +6,6 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
-
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
         <Style x:Key="LinkButtonStyle" TargetType="Button">
@@ -28,23 +27,18 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="10"/>
         </Style>
-        <Style x:Key="HomeButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="180"/>
-            <Setter Property="Margin" Value="10"/>
-        </Style>
     </UserControl.Resources>
 
-    <Grid>
-        <Border Background="Gray" Height="60" VerticalAlignment="Top">
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Background="Gray" Height="60">
             <DockPanel HorizontalAlignment="Stretch">
-                <ToggleButton x:Name="SidebarToggle" Content="☰" Width="60" Height="60" Click="SidebarToggle_Click"/>
+                <ToggleButton x:Name="SidebarToggle" Content="☰" Width="60" Height="60" DockPanel.Dock="Left" Click="SidebarToggle_Click"/>
                 <Image Source="/Images/Logo1.png" Width="60" Height="60" DockPanel.Dock="Right" HorizontalAlignment="Right" MouseDown="Logo_Click"/>
             </DockPanel>
         </Border>
-
-        <Border x:Name="Sidebar" Background="Gray" Width="250" HorizontalAlignment="Left" Visibility="Collapsed">
-            <StackPanel>
-                <Button Content="Home" Style="{StaticResource HomeButtonStyle}" Click="HomeButton_Click" Width="100" HorizontalAlignment="Center"/>
+        <DockPanel x:Name="Sidebar" DockPanel.Dock="Left" Background="Gray" Width="0">
+            <StackPanel DockPanel.Dock="Top">
+                <Button Content="Home" Style="{StaticResource SidebarButtonStyle}" Click="HomeButton_Click" Width="100" HorizontalAlignment="Center"/>
                 <ComboBox Width="180" Margin="10">
                     <ComboBoxItem Content="Level 1"/>
                     <ComboBoxItem Content="Level 2"/>
@@ -55,31 +49,40 @@
                     <ComboBoxItem Content="Level 7"/>
                     <ComboBoxItem Content="Level 8"/>
                 </ComboBox>
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10">
                 <StackPanel x:Name="LoggedInPanel" Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVisConverter}}" Orientation="Horizontal">
-                    <Button Content="Account" Style="{StaticResource SidebarButtonStyle}" Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
-                    <Button Content="Uitloggen" Style="{StaticResource SidebarButtonStyle}" Click="LogoutButton_Click" Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
+                    <Button Content="Account" 
+                        Style="{StaticResource SidebarButtonStyle}" 
+                        Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
+                    <Button Content="Uitloggen" 
+                        Style="{StaticResource SidebarButtonStyle}" 
+                        Click="LogoutButton_Click" 
+                        Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
                 </StackPanel>
                 <StackPanel x:Name="LoggedOutPanel" Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}" Orientation="Horizontal">
-                    <Button Content="Inloggen" Style="{StaticResource SidebarButtonStyle}" Click="LoginButton_Click" Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
-                    <Button Content="Registreren" Style="{StaticResource SidebarButtonStyle}" Click="RegisterButton_Click" Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
+                    <Button Content="Inloggen" 
+                        Style="{StaticResource SidebarButtonStyle}" 
+                        Click="LoginButton_Click" 
+                        Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
+
+                    <Button Content="Registreren" 
+                        Style="{StaticResource SidebarButtonStyle}" 
+                        Click="RegisterButton_Click" 
+                        Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
                 </StackPanel>
             </StackPanel>
-        </Border>
-
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+        </DockPanel>
+        
+        <StackPanel 
+            VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock Text="Homepagina" FontSize="30" FontWeight="Bold" Margin="0,20,0,20" HorizontalAlignment="Center"/>
-
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Height="500" Width="800">
-                <TextBlock TextWrapping="Wrap" 
-                           Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ultricies varius aliquet. Proin id ex dictum, vulputate justo ac, feugiat ligula. Cras laoreet consectetur libero id luctus. Morbi eget porttitor libero. Vestibulum lobortis gravida porta. Duis et sollicitudin libero, et mattis magna. Mauris at erat interdum, blandit lacus nec, eleifend arcu. Curabitur sit amet diam dapibus dolor venenatis pharetra. Suspendisse congue dui non odio semper pulvinar. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In lectus mi, cursus nec sapien nec, tempus malesuada dui.
-
-Aliquam mollis elit eget ipsum mollis, sit amet vestibulum neque eleifend. Nunc id magna nec sapien pretium tempus eu ac odio. Nam nec neque sed urna eleifend imperdiet nec a nibh. Nulla vestibulum tellus ligula, a sollicitudin massa commodo id. In id ligula sit amet dui euismod auctor id id purus. Etiam ornare augue urna. Aliquam non velit eu erat semper elementum. Maecenas ut dolor ornare, molestie nulla vitae, ultricies tortor. Sed ultricies bibendum porta. Nam non libero vel est molestie accumsan non a nibh.
-
-Quisque non urna est. Vivamus porttitor massa neque, eu vehicula dui ullamcorper vel. Quisque vel dui odio. Sed convallis sagittis sapien et varius. Maecenas cursus diam ac nisl sollicitudin, vel dapibus risus vestibulum. Integer nec vehicula velit. Morbi id facilisis turpis. Donec lacinia ex ut dolor blandit, a varius dui volutpat. Donec commodo justo nec nunc consectetur, vitae maximus ante consectetur. Duis commodo mauris volutpat elit condimentum cursus. Nam ac sapien ligula. Donec quis nulla porta, feugiat nisi ut, tristique nibh." />
-            </ScrollViewer>
-
+                <TextBlock TextWrapping="Wrap" TextAlignment="Center"
+                           Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ultricies varius aliquet. Proin id ex dictum, vulputate justo ac, feugiat ligula. Cras laoreet consectetur libero id luctus. Morbi eget porttitor libero. Vestibulum lobortis gravida porta. Duis et sollicitudin libero, et mattis magna. Mauris at erat interdum, blandit lacus nec, eleifend arcu. Curabitur sit amet diam dapibus dolor venenatis pharetra. Suspendisse congue dui non odio semper pulvinar. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In lectus mi, cursus nec sapien nec, tempus malesuada dui.Aliquam mollis elit eget ipsum mollis, sit amet vestibulum neque eleifend. Nunc id magna nec sapien pretium tempus eu ac odio. Nam nec neque sed urna eleifend imperdiet nec a nibh. Nulla vestibulum tellus ligula, a sollicitudin massa commodo id. In id ligula sit amet dui euismod auctor id id purus. Etiam ornare augue urna. Aliquam non velit eu erat semper elementum. Maecenas ut dolor ornare, molestie nulla vitae, ultricies tortor. Sed ultricies bibendum porta. Nam non libero vel est molestie accumsan non a nibh. Quisque non urna est. Vivamus porttitor massa neque, eu vehicula dui ullamcorper vel. Quisque vel dui odio. Sed convallis sagittis sapien et varius. Maecenas cursus diam ac nisl sollicitudin, vel dapibus risus vestibulum. Integer nec vehicula velit. Morbi id facilisis turpis. Donec lacinia ex ut dolor blandit, a varius dui volutpat. Donec commodo justo nec nunc consectetur, vitae maximus ante consectetur. Duis commodo mauris volutpat elit condimentum cursus. Nam ac sapien ligula. Donec quis nulla porta, feugiat nisi ut, tristique nibh." />
+                </ScrollViewer>
             <Button Content="Naar Levels" Height="30" Width="200" Click="LevelsPagina_Click"/>
-
-        </StackPanel>
-    </Grid>
+        </StackPanel>  
+        
+    </DockPanel>
 </UserControl>

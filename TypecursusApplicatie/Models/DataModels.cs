@@ -29,6 +29,12 @@ namespace TypecursusApplicatie.Models
 
         // Navigatie-eigenschap
         public virtual ICollection<Module> Modules { get; set; }
+
+        // Properties for progress calculation (not mapped to database)
+        [NotMapped]
+        public int ProgressPercentage { get; set; }
+        [NotMapped]
+        public string ProgressDisplay { get; set; }
     }
 
     public class Module

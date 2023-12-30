@@ -13,7 +13,7 @@ namespace TypecursusApplicatie
     public partial class Levelspagina : UserControl
     {
         private MainWindow mainWindow;
-        public ObservableCollection<Level> Levels { get; private set; }
+        public ObservableCollection<TypecursusApplicatie.Models.Level> Levels { get; private set; }
 
         public Levelspagina(MainWindow mainWindow)
         {
@@ -42,15 +42,27 @@ namespace TypecursusApplicatie
             var alleLevels = gebruikerDAL.GetAllLevels();
             Levels.Clear();
 
+            int userId = UserSession.CurrentUserID; // Get current user ID
             foreach (var level in alleLevels)
             {
+                int progress = gebruikerDAL.GetProgressForLevel(userId, level.LevelID);
+                level.ProgressPercentage = progress;
+                level.ProgressDisplay = GenerateProgressDisplay(progress);
+
                 Levels.Add(level);
             }
         }
 
+        private string GenerateProgressDisplay(int progress)
+        {
+            return $"{progress}% completed";
+        }
+    
 
-        // Event handlers voor knoppen zoals SidebarToggle_Click, Logo_Click, etc.
-        private void Homepagina_Loaded(object sender, RoutedEventArgs e)
+
+
+    // Event handlers voor knoppen zoals SidebarToggle_Click, Logo_Click, etc.
+    private void Homepagina_Loaded(object sender, RoutedEventArgs e)
         {
             if (this.DataContext is MainWindow main)
             {

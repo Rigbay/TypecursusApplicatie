@@ -13,7 +13,8 @@ namespace TypecursusApplicatie
         public Homepagina()
         {
             InitializeComponent();
-            this.Loaded += Homepagina_Loaded;
+            this.mainWindow = mainWindow;
+            this.DataContext = mainWindow;
         }
 
         public Homepagina(MainWindow mainWindow)

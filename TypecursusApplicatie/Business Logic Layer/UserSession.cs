@@ -5,6 +5,7 @@ namespace TypecursusApplicatie.BusinessLogicLayer
     public class UserSession
     {
         public static Gebruiker CurrentUser { get; set; }
+        public static int CurrentUserID { get; set; }
 
         public static void Login(Gebruiker user)
         {

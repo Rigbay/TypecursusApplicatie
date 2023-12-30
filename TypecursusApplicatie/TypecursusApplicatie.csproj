@@ -120,6 +120,7 @@
     <Compile Include="Business Logic Layer\UserSession.cs" />
     <Compile Include="Data Access Layer\GebruikerDAL.cs" />
     <Compile Include="Data Access Layer\DatabaseContext.cs" />
+    <Compile Include="Models\Level.cs" />
     <Compile Include="Models\DataModels.cs" />
     <Compile Include="User Interface\Inlogpagina.xaml.cs">
       <DependentUpon>Inlogpagina.xaml</DependentUpon>
