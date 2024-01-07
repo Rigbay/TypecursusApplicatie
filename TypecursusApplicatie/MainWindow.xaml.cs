@@ -73,5 +73,12 @@ namespace TypecursusApplicatie
             MainContent.Content = new ModuleOverzichtspagina(this, levelId);
         }
 
+        public void LoadModuleDetailpagina(int moduleId)
+        {
+            // Vervang de huidige content door ModuleDetailpagina met de gekozen module
+            this.Content = new ModuleDetailpagina(this, moduleId);
+        }
+
+
     }
 }

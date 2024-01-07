@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using TypecursusApplicatie.Models;
 using System.Collections.Generic;
+using TypecursusApplicatie.BusinessLogicLayer;
 
 namespace TypecursusApplicatie.Data_Access_Layer
 {
@@ -85,6 +86,33 @@ namespace TypecursusApplicatie.Data_Access_Layer
             return modules;
         }
 
+
+        public void AddModulePoging(ModulePogingen poging)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                string insertQuery = "INSERT INTO ModulePogingen (GebruikersID, ModuleID, GebruikersWPM, GebruikersNauwkeurigheid, PogingDatum) VALUES (@GebruikersID, @ModuleID, @GebruikersWPM, @GebruikersNauwkeurigheid, @PogingDatum)";
+                MySqlCommand cmd = new MySqlCommand(insertQuery, conn);
+
+                cmd.Parameters.AddWithValue("@GebruikersID", poging.GebruikersID);
+                cmd.Parameters.AddWithValue("@ModuleID", poging.ModuleID);
+                cmd.Parameters.AddWithValue("@GebruikersWPM", poging.GebruikersWPM);
+                cmd.Parameters.AddWithValue("@GebruikersNauwkeurigheid", poging.GebruikersNauwkeurigheid);
+                cmd.Parameters.AddWithValue("@PogingDatum", poging.PogingDatum);
+
+                try
+                {
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Fout bij het toevoegen van modulepoging: " + ex.Message);
+                }
+            }
+        }
+
+
         public List<Module> GetModulesForLevel(int levelId)
         {
             List<Module> modules = new List<Module>();
@@ -122,6 +150,46 @@ namespace TypecursusApplicatie.Data_Access_Layer
             }
             return modules;
         }
+
+        public Module GetModuleById(int moduleId)
+        {
+            Module module = null;
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                string query = "SELECT * FROM Modules WHERE ModuleID = @ModuleID";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@ModuleID", moduleId);
+
+                try
+                {
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            module = new Module
+                            {
+                                ModuleID = Convert.ToInt32(reader["ModuleID"]),
+                                LevelID = Convert.ToInt32(reader["LevelID"]),
+                                ModuleNaam = reader["ModuleNaam"].ToString(),
+                                ModuleBeschrijving = reader["ModuleBeschrijving"].ToString(),
+                                ModuleContent = reader["ModuleContent"].ToString(),
+                                MinWPM = Convert.ToInt32(reader["MinWPM"]),
+                                MinNauwkeurigheid = Convert.ToInt32(reader["MinNauwkeurigheid"])
+                            };
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Fout bij het ophalen van de module: " + ex.Message);
+                }
+            }
+
+            return module;
+        }
+
 
 
         public static string HashWachtwoord(string wachtwoord)

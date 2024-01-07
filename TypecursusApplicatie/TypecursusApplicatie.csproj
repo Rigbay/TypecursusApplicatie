@@ -133,6 +133,9 @@
     <Compile Include="User Interface\ModuleOverzichtspagina.xaml.cs">
       <DependentUpon>ModuleOverzichtspagina.xaml</DependentUpon>
     </Compile>
+    <Compile Include="User Interface\ModuleDetailpagina.xaml.cs">
+      <DependentUpon>ModuleDetailpagina.xaml</DependentUpon>
+    </Compile>
     <Compile Include="User Interface\Registratiepagina.xaml.cs">
       <DependentUpon>Registratiepagina.xaml</DependentUpon>
     </Compile>
@@ -161,6 +164,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="User Interface\ModuleOverzichtspagina.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="User Interface\ModuleDetailpagina.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

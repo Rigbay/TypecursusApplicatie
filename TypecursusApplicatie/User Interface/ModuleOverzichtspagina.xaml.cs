@@ -42,8 +42,9 @@ namespace TypecursusApplicatie
         {
             Button btn = sender as Button;
             Module selectedModule = btn.DataContext as Module;
-            MessageBox.Show($"Module {selectedModule.ModuleNaam} gestart!");
-            // Voeg hier logica toe om de module te starten
+
+            // Laad ModuleDetailpagina met de geselecteerde module
+            mainWindow.LoadModuleDetailpagina(selectedModule.ModuleID);
         }
 
         private void Homepagina_Loaded(object sender, RoutedEventArgs e)

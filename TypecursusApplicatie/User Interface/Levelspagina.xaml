@@ -127,5 +127,6 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Grid>
+        
     </DockPanel>
 </UserControl>
