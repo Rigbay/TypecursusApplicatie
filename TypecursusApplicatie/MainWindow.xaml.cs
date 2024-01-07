@@ -67,5 +67,11 @@ namespace TypecursusApplicatie
         {
             LoadHomeControl();
         }
+
+        public void LoadModuleOverzichtspagina(int levelId)
+        {
+            MainContent.Content = new ModuleOverzichtspagina(this, levelId);
+        }
+
     }
 }

@@ -48,6 +48,81 @@ namespace TypecursusApplicatie.Data_Access_Layer
             }
             return levels;
         }
+        public List<Module> GetAllModules()
+        {
+            List<Module> modules = new List<Module>();
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                string query = "SELECT ModuleID, LevelID, ModuleNaam, ModuleBeschrijving, ModuleContent, MinWPM, MinNauwkeurigheid FROM Modules";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+
+                try
+                {
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            modules.Add(new Module
+                            {
+                                ModuleID = Convert.ToInt32(reader["ModuleID"]),
+                                LevelID = Convert.ToInt32(reader["LevelID"]),
+                                ModuleNaam = reader["ModuleNaam"].ToString(),
+                                ModuleBeschrijving = reader["ModuleBeschrijving"].ToString(),
+                                ModuleContent = reader["ModuleContent"].ToString(),
+                                MinWPM = Convert.ToInt32(reader["MinWPM"]),
+                                MinNauwkeurigheid = Convert.ToInt32(reader["MinNauwkeurigheid"])
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Fout bij het ophalen van alle modules: " + ex.Message);
+                }
+            }
+            return modules;
+        }
+
+        public List<Module> GetModulesForLevel(int levelId)
+        {
+            List<Module> modules = new List<Module>();
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                string query = "SELECT ModuleID, LevelID, ModuleNaam, ModuleBeschrijving, ModuleContent, MinWPM, MinNauwkeurigheid FROM Modules WHERE LevelID = @LevelID";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@LevelID", levelId);
+
+                try
+                {
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            modules.Add(new Module
+                            {
+                                ModuleID = Convert.ToInt32(reader["ModuleID"]),
+                                LevelID = Convert.ToInt32(reader["LevelID"]),
+                                ModuleNaam = reader["ModuleNaam"].ToString(),
+                                ModuleBeschrijving = reader["ModuleBeschrijving"].ToString(),
+                                ModuleContent = reader["ModuleContent"].ToString(),
+                                MinWPM = Convert.ToInt32(reader["MinWPM"]),
+                                MinNauwkeurigheid = Convert.ToInt32(reader["MinNauwkeurigheid"])
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Fout bij het ophalen van modules voor level: " + ex.Message);
+                }
+            }
+            return modules;
+        }
+
 
         public static string HashWachtwoord(string wachtwoord)
     {

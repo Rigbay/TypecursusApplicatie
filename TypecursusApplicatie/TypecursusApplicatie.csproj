@@ -120,7 +120,6 @@
     <Compile Include="Business Logic Layer\UserSession.cs" />
     <Compile Include="Data Access Layer\GebruikerDAL.cs" />
     <Compile Include="Data Access Layer\DatabaseContext.cs" />
-    <Compile Include="Models\Level.cs" />
     <Compile Include="Models\DataModels.cs" />
     <Compile Include="User Interface\Inlogpagina.xaml.cs">
       <DependentUpon>Inlogpagina.xaml</DependentUpon>
@@ -130,6 +129,9 @@
     </Compile>
     <Compile Include="User Interface\Levelspagina.xaml.cs">
       <DependentUpon>Levelspagina.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="User Interface\ModuleOverzichtspagina.xaml.cs">
+      <DependentUpon>ModuleOverzichtspagina.xaml</DependentUpon>
     </Compile>
     <Compile Include="User Interface\Registratiepagina.xaml.cs">
       <DependentUpon>Registratiepagina.xaml</DependentUpon>
@@ -155,6 +157,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="User Interface\Levelspagina.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="User Interface\ModuleOverzichtspagina.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

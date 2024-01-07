@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -44,6 +45,7 @@ namespace TypecursusApplicatie.Models
         [ForeignKey("Level")]
         public int LevelID { get; set; }
         public string ModuleNaam { get; set; }
+        public string ModuleBeschrijving { get; set; }
         public string ModuleContent { get; set; }
         public int MinWPM { get; set; }
         public int MinNauwkeurigheid { get; set; }

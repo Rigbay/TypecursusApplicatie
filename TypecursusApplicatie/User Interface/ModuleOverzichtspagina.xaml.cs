@@ -1,77 +1,51 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
-using System.Linq;
 using TypecursusApplicatie.Data_Access_Layer;
-using TypecursusApplicatie.BusinessLogicLayer;
 using TypecursusApplicatie.Models;
 using System.Windows.Input;
-using System.Diagnostics;
 
 namespace TypecursusApplicatie
 {
-    public partial class Levelspagina : UserControl
+    public partial class ModuleOverzichtspagina : UserControl
     {
         private MainWindow mainWindow;
-        public ObservableCollection<TypecursusApplicatie.Models.Level> Levels { get; private set; }
+        private int currentLevelId;
+        public ObservableCollection<Module> Modules { get; private set; }
 
-        public Levelspagina(MainWindow mainWindow)
+        public ModuleOverzichtspagina(MainWindow mainWindow, int levelId)
         {
             InitializeComponent();
             this.mainWindow = mainWindow;
-            Levels = new ObservableCollection<Level>();
+            this.currentLevelId = levelId;
+            Modules = new ObservableCollection<Module>();
             this.DataContext = this;
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (UserSession.IsLoggedIn())
-            {
-                LoadLevels();
-            }
-            else
-            {
-                MessageBox.Show("U moet ingelogd zijn om deze pagina te bekijken.");
-                mainWindow.LoadLoginControl();
-            }
+            LoadModulesForLevel(currentLevelId);
         }
 
-        private void LoadLevels()
+        private void LoadModulesForLevel(int levelId)
         {
             GebruikerDAL gebruikerDAL = new GebruikerDAL();
-            var alleLevels = gebruikerDAL.GetAllLevels();
-            Levels.Clear();
-
-            int userId = UserSession.CurrentUserID; // Get current user ID
-            foreach (var level in alleLevels)
+            var modulesForLevel = gebruikerDAL.GetModulesForLevel(levelId);
+            Modules.Clear();
+            foreach (var module in modulesForLevel)
             {
-                int progress = gebruikerDAL.GetProgressForLevel(userId, level.LevelID);
-                level.ProgressPercentage = progress;
-                level.ProgressDisplay = GenerateProgressDisplay(progress);
-
-                Levels.Add(level);
+                Modules.Add(module);
             }
         }
 
-        private string GenerateProgressDisplay(int progress)
+        private void StartModuleButton_Click(object sender, RoutedEventArgs e)
         {
-            return $"{progress}% completed";
+            Button btn = sender as Button;
+            Module selectedModule = btn.DataContext as Module;
+            MessageBox.Show($"Module {selectedModule.ModuleNaam} gestart!");
+            // Voeg hier logica toe om de module te starten
         }
 
-        private void LevelTile_Click(object sender, RoutedEventArgs e)
-        {
-            Button clickedButton = sender as Button;
-            Level selectedLevel = clickedButton.DataContext as Level;
-            if (selectedLevel != null)
-            {
-                // Navigeer naar de ModuleOverzichtspagina voor het geselecteerde level
-                mainWindow.LoadModuleOverzichtspagina(selectedLevel.LevelID);
-            }
-        }
-
-
-
-        // Event handlers voor knoppen zoals SidebarToggle_Click, Logo_Click, etc.
         private void Homepagina_Loaded(object sender, RoutedEventArgs e)
         {
             if (this.DataContext is MainWindow main)
@@ -114,5 +88,6 @@ namespace TypecursusApplicatie
         {
             mainWindow.LoadHomeControl();
         }
+
     }
 }

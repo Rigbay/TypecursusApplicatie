@@ -10,6 +10,7 @@ namespace TypecursusApplicatie.BusinessLogicLayer
         public static void Login(Gebruiker user)
         {
             CurrentUser = user;
+            CurrentUserID = user.GebruikersID;
         }
 
         public static void Logout()
