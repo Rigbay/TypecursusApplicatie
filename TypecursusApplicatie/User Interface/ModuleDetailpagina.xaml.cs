@@ -14,7 +14,6 @@ namespace TypecursusApplicatie
     {
         private Module _currentModule;
         private MainWindow mainWindow;
-        private int timeLeft;
         private DispatcherTimer typingTimer;
         private int currentWordIndex = 0;
         private int charsTypedCorrectly = 0;
