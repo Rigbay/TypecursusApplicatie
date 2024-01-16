@@ -43,7 +43,6 @@ namespace TypecursusApplicatie
             Button btn = sender as Button;
             Module selectedModule = btn.DataContext as Module;
 
-            // Laad ModuleDetailpagina met de geselecteerde module
             mainWindow.LoadModuleDetailpagina(selectedModule.ModuleID);
         }
 

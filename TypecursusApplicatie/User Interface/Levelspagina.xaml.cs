@@ -64,14 +64,10 @@ namespace TypecursusApplicatie
             Level selectedLevel = clickedButton.DataContext as Level;
             if (selectedLevel != null)
             {
-                // Navigeer naar de ModuleOverzichtspagina voor het geselecteerde level
                 mainWindow.LoadModuleOverzichtspagina(selectedLevel.LevelID);
             }
         }
 
-
-
-        // Event handlers voor knoppen zoals SidebarToggle_Click, Logo_Click, etc.
         private void Homepagina_Loaded(object sender, RoutedEventArgs e)
         {
             if (this.DataContext is MainWindow main)

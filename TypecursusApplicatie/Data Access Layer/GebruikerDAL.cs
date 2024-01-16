@@ -190,17 +190,16 @@ namespace TypecursusApplicatie.Data_Access_Layer
             return module;
         }
 
-
-
-        public static string HashWachtwoord(string wachtwoord)
-    {
-        using (SHA256 sha256 = SHA256.Create())
+        public static string HashWachtwoord(string wachtwoord, string salt)
         {
-            byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(wachtwoord));
-            return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                // Combine the password and salt before hashing
+                string saltedPassword = wachtwoord + salt;
+                byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
+                return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+            }
         }
-    }
-
 
         public int GetProgressForLevel(int userId, int levelId)
         {
@@ -211,7 +210,6 @@ namespace TypecursusApplicatie.Data_Access_Layer
                 using (var conn = new MySqlConnection(connectionString))
                 {
                     conn.Open();
-                    // Replace this query with one that suits your database schema
                     var query = @"SELECT COUNT(*) AS CompletedModules,
                                 (SELECT COUNT(*) FROM Modules WHERE LevelID = @LevelID) AS TotalModules
                                 FROM GebruikersVoortgang
@@ -243,23 +241,26 @@ namespace TypecursusApplicatie.Data_Access_Layer
             catch (Exception ex)
             {
                 Console.WriteLine("Error in GetProgressForLevel: " + ex.Message);
-                // Handle exception as needed
             }
 
             return progressPercentage;
         }
 
 
-public void AddGebruiker(Gebruiker nieuweGebruiker)
+        public void AddGebruiker(Gebruiker nieuweGebruiker)
         {
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO Gebruikers (Voornaam, Achternaam, Emailadres, Wachtwoord) VALUES (@Voornaam, @Achternaam, @Emailadres, @Wachtwoord)", conn);
+                var salt = Guid.NewGuid().ToString();
+                var hashedPassword = HashWachtwoord(nieuweGebruiker.Wachtwoord, salt);
+
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO Gebruikers (Voornaam, Achternaam, Emailadres, Wachtwoord, Salt) VALUES (@Voornaam, @Achternaam, @Emailadres, @Wachtwoord, @Salt)", conn);
 
                 cmd.Parameters.AddWithValue("@Voornaam", nieuweGebruiker.Voornaam);
                 cmd.Parameters.AddWithValue("@Achternaam", nieuweGebruiker.Achternaam);
                 cmd.Parameters.AddWithValue("@Emailadres", nieuweGebruiker.Emailadres);
-                cmd.Parameters.AddWithValue("@Wachtwoord", HashWachtwoord(nieuweGebruiker.Wachtwoord));
+                cmd.Parameters.AddWithValue("@Wachtwoord", hashedPassword);
+                cmd.Parameters.AddWithValue("@Salt", salt);
 
                 try
                 {
@@ -295,6 +296,7 @@ public void AddGebruiker(Gebruiker nieuweGebruiker)
                             Voornaam = reader["Voornaam"].ToString(),
                             Achternaam = reader["Achternaam"].ToString(),
                             Emailadres = reader["Emailadres"].ToString(),
+                            Salt = reader["Salt"].ToString(),
                             Wachtwoord = reader["Wachtwoord"].ToString()
                         };
                     }
@@ -308,5 +310,48 @@ public void AddGebruiker(Gebruiker nieuweGebruiker)
 
             return gebruiker;
         }
+
+        public void UpdateUserProgress(int userId, int moduleId, bool isModuleCompleted)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+
+                // Check if a record already exists
+                string checkQuery = "SELECT COUNT(1) FROM GebruikersVoortgang WHERE GebruikersID = @UserId AND ModuleID = @ModuleId";
+                MySqlCommand checkCmd = new MySqlCommand(checkQuery, conn);
+                checkCmd.Parameters.AddWithValue("@UserId", userId);
+                checkCmd.Parameters.AddWithValue("@ModuleId", moduleId);
+
+                int recordExists = Convert.ToInt32(checkCmd.ExecuteScalar());
+                string query;
+                
+                if (recordExists > 0)
+                {
+                    // Update existing record
+                    query = "UPDATE GebruikersVoortgang SET ModuleVoltooid = @IsModuleCompleted, VoltooiDatum = NOW() WHERE GebruikersID = @UserId AND ModuleID = @ModuleId";
+                }
+                else
+                {
+                    // Insert new record
+                    query = "INSERT INTO GebruikersVoortgang (GebruikersID, ModuleID, ModuleVoltooid, VoltooiDatum) VALUES (@UserId, @ModuleId, @IsModuleCompleted, NOW())";
+                }
+
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@IsModuleCompleted", isModuleCompleted);
+                cmd.Parameters.AddWithValue("@UserId", userId);
+                cmd.Parameters.AddWithValue("@ModuleId", moduleId);
+
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error in updating/adding user progress: " + ex.Message);
+                }
+            }
+        }
+
     }
 }

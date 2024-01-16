@@ -62,27 +62,20 @@ namespace TypecursusApplicatie
             string email = txtEmail.Text;
             string ingevoerdeWachtwoord = txtPassword.Password;
 
-            if (!IsEmailValid(email))
+            if (!IsEmailValid(email) || !IsPasswordValid(ingevoerdeWachtwoord))
             {
-                MessageBox.Show("Ongeldig e-mailadres.");
-                return;
-            }
-
-            if (!IsPasswordValid(ingevoerdeWachtwoord))
-            {
-                MessageBox.Show("Wachtwoord moet minstens 8 tekens lang zijn en zowel letters als cijfers bevatten.");
+                MessageBox.Show("Controleer of het e-mailadres en wachtwoord correct zijn.");
                 return;
             }
 
             GebruikerDAL gebruikerDAL = new GebruikerDAL();
             Gebruiker gebruiker = gebruikerDAL.GetGebruikerByEmail(email);
 
-            if (gebruiker != null && GebruikerDAL.HashWachtwoord(ingevoerdeWachtwoord) == gebruiker.Wachtwoord)
+            if (gebruiker != null && gebruiker.Wachtwoord == GebruikerDAL.HashWachtwoord(ingevoerdeWachtwoord, gebruiker.Salt))
             {
                 UserSession.Login(gebruiker);
                 MessageBox.Show("Succesvol ingelogd!");
                 mainWindow.LoadHomeControl();
-                mainWindow.OnPropertyChanged(nameof(mainWindow.IsUserLoggedIn));
             }
             else
             {

@@ -49,9 +49,9 @@ namespace TypecursusApplicatie
             string email = txtEmailReg.Text;
             string wachtwoord = txtPasswordReg.Password;
 
-            if (string.IsNullOrWhiteSpace(voornaam) || string.IsNullOrWhiteSpace(achternaam))
+            if (string.IsNullOrWhiteSpace(voornaam) || string.IsNullOrWhiteSpace(achternaam) || !IsEmailValid(email) || !IsPasswordValid(wachtwoord))
             {
-                MessageBox.Show("Voornaam en achternaam zijn verplicht.");
+                MessageBox.Show("Controleer of alle velden correct zijn ingevuld.");
                 return;
             }
 
@@ -73,7 +73,7 @@ namespace TypecursusApplicatie
                 Voornaam = voornaam,
                 Achternaam = achternaam,
                 Emailadres = email,
-                Wachtwoord = GebruikerDAL.HashWachtwoord(wachtwoord)
+                Wachtwoord = wachtwoord,
             };
 
             gebruikerDAL.AddGebruiker(nieuweGebruiker);

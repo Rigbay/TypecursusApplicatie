@@ -14,6 +14,7 @@ namespace TypecursusApplicatie.Models
         public string Achternaam { get; set; }
         public string Emailadres { get; set; }
         public string Wachtwoord { get; set; } // Gehasht
+        public string Salt { get; set; }
 
         // Navigatie-eigenschappen
         public virtual ICollection<GebruikersVoortgang> Voortgang { get; set; }
@@ -31,7 +32,6 @@ namespace TypecursusApplicatie.Models
         // Navigatie-eigenschap
         public virtual ICollection<Module> Modules { get; set; }
 
-        // Properties for progress calculation (not mapped to database)
         [NotMapped]
         public int ProgressPercentage { get; set; }
         [NotMapped]
@@ -49,6 +49,7 @@ namespace TypecursusApplicatie.Models
         public string ModuleContent { get; set; }
         public int MinWPM { get; set; }
         public int MinNauwkeurigheid { get; set; }
+        public int TimeLeft { get; set; }
 
         // Navigatie-eigenschappen
         public virtual Level Level { get; set; }

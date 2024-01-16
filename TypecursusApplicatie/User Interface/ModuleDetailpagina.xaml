@@ -6,7 +6,6 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              xmlns:local="clr-namespace:TypecursusApplicatie">
-
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
         <Style x:Key="LinkButtonStyle" TargetType="Button">
@@ -31,6 +30,7 @@
     </UserControl.Resources>
 
     <DockPanel>
+        <!-- Header -->
         <Border DockPanel.Dock="Top" Background="Gray" Height="60">
             <DockPanel HorizontalAlignment="Stretch">
                 <ToggleButton x:Name="SidebarToggle" Content="☰" Width="60" Height="60" DockPanel.Dock="Left" Click="SidebarToggle_Click"/>
@@ -38,7 +38,8 @@
             </DockPanel>
         </Border>
 
-        <DockPanel x:Name="Sidebar" DockPanel.Dock="Left" Background="Gray" Width="250">
+        <!-- Sidebar -->
+        <DockPanel x:Name="Sidebar" DockPanel.Dock="Left" Background="Gray" Width="0">
             <StackPanel DockPanel.Dock="Top">
                 <Button Content="Home" Style="{StaticResource SidebarButtonStyle}" Click="HomeButton_Click" Width="100" HorizontalAlignment="Center"/>
                 <ComboBox Width="180" Margin="10">
@@ -54,56 +55,62 @@
             </StackPanel>
 
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10">
-                <StackPanel x:Name="LoggedInPanel" 
-        Visibility="{Binding Path=IsUserLoggedIn, 
-                             RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, 
-                             Converter={StaticResource BoolToVisConverter}}" 
-        Orientation="Horizontal">
-                    <Button Content="Account" 
-            Style="{StaticResource SidebarButtonStyle}" 
-            Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
-                    <Button Content="Uitloggen" 
-            Style="{StaticResource SidebarButtonStyle}" 
-            Click="LogoutButton_Click" 
-            Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
+                <StackPanel x:Name="LoggedInPanel" Visibility="{Binding Path=IsUserLoggedIn, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource BoolToVisConverter}}" Orientation="Horizontal">
+                    <Button Content="Account" Style="{StaticResource SidebarButtonStyle}" Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
+                    <Button Content="Uitloggen" Style="{StaticResource SidebarButtonStyle}" Click="LogoutButton_Click" Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
                 </StackPanel>
-                <StackPanel x:Name="LoggedOutPanel" 
-        Visibility="{Binding Path=IsNotLoggedIn, 
-                             RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, 
-                             Converter={StaticResource BoolToVisConverter}}" 
-        Orientation="Horizontal">
-                    <Button Content="Inloggen" 
-            Style="{StaticResource SidebarButtonStyle}" 
-            Click="LoginButton_Click" 
-            Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
-                    <Button Content="Registreren" 
-            Style="{StaticResource SidebarButtonStyle}" 
-            Click="RegisterButton_Click" 
-            Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
-
+                <StackPanel x:Name="LoggedOutPanel" Visibility="{Binding Path=IsNotLoggedIn, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}, Converter={StaticResource BoolToVisConverter}}"  Orientation="Horizontal">
+                    <Button Content="Inloggen" Style="{StaticResource SidebarButtonStyle}" Click="LoginButton_Click" Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
+                    <Button Content="Registreren" Style="{StaticResource SidebarButtonStyle}" Click="RegisterButton_Click" Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
                 </StackPanel>
             </StackPanel>
         </DockPanel>
 
-        <DockPanel>
-            <TextBlock x:Name="lblModuleName" FontSize="24" FontWeight="Bold" Margin="10" />
-        <TextBlock x:Name="lblModuleRequirements" FontSize="18" Margin="10" />
 
-        <RichTextBox x:Name="rtxtTypetestText" HorizontalAlignment="Center" VerticalAlignment="Top" Height="150" Width="700" IsReadOnly="True" />
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <!-- Extra ruimte boven -->
+                <RowDefinition Height="Auto"/>
+                <!-- Module Name and Requirements -->
+                <RowDefinition Height="*"/>
+                <!-- Typing Test Content -->
+                <RowDefinition Height="Auto"/>
+                <!-- WPM, Accuracy, Timer -->
+                <RowDefinition Height="Auto"/>
+                <!-- Typing Area -->
+                <RowDefinition Height="Auto"/>
+                <!-- Buttons -->
+                <RowDefinition Height="2*"/>
+                <!-- Extra ruimte onder -->
+            </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <TextBlock x:Name="lblWPM" Text="WPM: 0" Margin="10" />
-            <TextBlock x:Name="lblAccuracy" Text="Accuracy: 0%" Margin="10" />
-            <TextBlock x:Name="lblTimer" Text="Tijd: 60" Margin="10" />
-         </StackPanel>
+            <!-- Module Name and Requirements -->
+            <StackPanel Grid.Row="0" Orientation="Vertical">
+                <TextBlock x:Name="lblModuleName" FontSize="24" FontWeight="Bold" Margin="10" HorizontalAlignment="Center"/>
+                <TextBlock x:Name="lblModuleRequirements" FontSize="16" Margin="10" HorizontalAlignment="Center"/>
+            </StackPanel>
 
-        <TextBox x:Name="txtTypingArea" Height="40" Width="700" Margin="10" />
+            <!-- Typing Test Content -->
+            <RichTextBox x:Name="rtxtTypetestText" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" Height="150" Width="700" IsReadOnly="True" Margin="10"/>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button x:Name="btnReset" Content="Reset" Width="100" Margin="5" />
-            <Button x:Name="btnBack" Content="Terug" Width="100" Margin="5" />
-        </StackPanel>
-        </DockPanel>
+            <!-- WPM, Accuracy, Timer -->
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock x:Name="lblWPM" FontSize="16" Margin="10" Text="WPM: 0"/>
+                <TextBlock x:Name="lblAccuracy" FontSize="16" Margin="10" Text="Accuracy: 0%"/>
+                <TextBlock x:Name="lblTimer" FontSize="16" Margin="10" Text="Tijd: 60"/>
+            </StackPanel>
+
+            <!-- Typing Area -->
+            <TextBox x:Name="txtTypingArea" Grid.Row="3" Height="40" Width="700" Margin="10" HorizontalAlignment="Center" TextChanged="TxtTypingArea_TextChanged" PreviewKeyDown="TxtTypingArea_PreviewKeyDown"/>
+
+
+            <!-- Buttons -->
+            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button x:Name="btnReset" Content="Reset" Width="100" Margin="5" Click="BtnReset_Click"/>
+                <Button x:Name="btnBack" Content="Terug" Width="100" Margin="5" Click="BtnBack_Click"/>
+            </StackPanel>
+        </Grid>
 
     </DockPanel>
 </UserControl>

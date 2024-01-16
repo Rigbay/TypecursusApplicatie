@@ -55,7 +55,7 @@ namespace TypecursusApplicatie
             UserSession.Logout();
             OnPropertyChanged(nameof(IsUserLoggedIn));
             OnPropertyChanged(nameof(IsNotLoggedIn));
-            LoadLoginControl(); // Terug naar inlogscherm
+            LoadLoginControl();
         }
 
         private void HomeButton_Click(object sender, RoutedEventArgs e)
@@ -75,8 +75,7 @@ namespace TypecursusApplicatie
 
         public void LoadModuleDetailpagina(int moduleId)
         {
-            // Vervang de huidige content door ModuleDetailpagina met de gekozen module
-            this.Content = new ModuleDetailpagina(this, moduleId);
+            MainContent.Content = new ModuleDetailpagina(this, moduleId);
         }
 
 
