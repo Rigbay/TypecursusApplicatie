@@ -11,6 +11,9 @@
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+        <local:BooleanToInverseVisibilityConverter x:Key="BoolToInverseVisConverter"/>
+        <local:BooleanToGrayConverter x:Key="BoolToGrayConverter"/>
+        <local:CompletionStatusToColorConverter x:Key="CompletionStatusToColorConverter"/>
         <Style x:Key="LinkButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
@@ -30,28 +33,42 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="10"/>
         </Style>
+        <Style x:Key="LogoHoverStyle" TargetType="Border">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#A2B1CB"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
 
     <DockPanel>
         <Border DockPanel.Dock="Top" Background="Gray" Height="60">
             <DockPanel HorizontalAlignment="Stretch">
                 <ToggleButton x:Name="SidebarToggle" Content="☰" Width="60" Height="60" DockPanel.Dock="Left" Click="SidebarToggle_Click"/>
-                <Image Source="/Images/Logo1.png" Width="60" Height="60" DockPanel.Dock="Right" HorizontalAlignment="Right" MouseDown="Logo_Click"/>
+                <Border DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource LogoHoverStyle}" MouseDown="Logo_Click">
+                    <Image Source="/Images/Logo1.png" Width="60" Height="60"/>
+                </Border>
             </DockPanel>
         </Border>
 
         <DockPanel x:Name="Sidebar" DockPanel.Dock="Left" Background="Gray" Width="0">
             <StackPanel DockPanel.Dock="Top">
                 <Button Content="Home" Style="{StaticResource SidebarButtonStyle}" Click="HomeButton_Click" Width="100" HorizontalAlignment="Center"/>
-                <ComboBox Width="180" Margin="10">
-                    <ComboBoxItem Content="Level 1"/>
-                    <ComboBoxItem Content="Level 2"/>
-                    <ComboBoxItem Content="Level 3"/>
-                    <ComboBoxItem Content="Level 4"/>
-                    <ComboBoxItem Content="Level 5"/>
-                    <ComboBoxItem Content="Level 6"/>
-                    <ComboBoxItem Content="Level 7"/>
-                    <ComboBoxItem Content="Level 8"/>
+                <ComboBox Width="180" Margin="10"
+          ItemsSource="{Binding Path=Levels, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+          SelectionChanged="ComboBox_SelectionChanged">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding LevelNaam}" Margin="5" Foreground="{Binding IsUnlocked, Converter={StaticResource BoolToGrayConverter}}" />
+                                <Image Source="/Images/lock-icon-2.png" Width="20" Height="20" Visibility="{Binding IsUnlocked, Converter={StaticResource BoolToInverseVisConverter}}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
                 </ComboBox>
             </StackPanel>
 
@@ -63,6 +80,7 @@
             Orientation="Horizontal">
                     <Button Content="Account" 
                 Style="{StaticResource SidebarButtonStyle}" 
+                Click="AccountButton_Click"
                 Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
                     <Button Content="Uitloggen" 
                 Style="{StaticResource SidebarButtonStyle}" 
@@ -103,6 +121,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="50,0,0,0">
@@ -110,7 +129,25 @@
                                     <TextBlock Text="{Binding ModuleBeschrijving}" TextWrapping="Wrap"/>
                                 </StackPanel>
 
-                                <Button Content="Start" Margin="20,0,100,0" Height="30" Width="75" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Click="StartModuleButton_Click"/>
+                                <TextBlock Grid.Column="1" 
+           Margin="10" 
+           VerticalAlignment="Center" 
+           HorizontalAlignment="Right"
+           Foreground="{Binding IsModuleCompleted, Converter={StaticResource CompletionStatusToColorConverter}}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="Nog niet behaald"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsModuleCompleted}" Value="True">
+                                                    <Setter Property="Text" Value="Behaald"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+
+                                <Button Content="Start" Margin="10,0,10,0" Height="30" Width="75" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Click="StartModuleButton_Click"/>
                             </Grid>
                         </Border>
                     </DataTemplate>

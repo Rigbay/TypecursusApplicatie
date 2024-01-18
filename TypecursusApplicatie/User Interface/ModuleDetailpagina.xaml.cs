@@ -361,6 +361,12 @@ namespace TypecursusApplicatie
             }
         }
 
+        // Event handler voor de statistiekenpagina knop
+        private void AccountButton_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.LoadAccountControl();
+        }
+
         // Event handler voor de login knop
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
@@ -404,6 +410,21 @@ namespace TypecursusApplicatie
             mainWindow.LoadHomeControl();
         }
 
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var comboBox = sender as ComboBox;
+            var selectedLevel = comboBox.SelectedItem as Level;
+            if (selectedLevel != null && selectedLevel.IsUnlocked)
+            {
+                mainWindow.LoadModuleOverzichtspagina(selectedLevel.LevelID);
+            }
+            else
+            {
+                // Reset the selection if the level is locked
+                comboBox.SelectedIndex = -1;
+            }
+        }
+
 
 
 
@@ -428,5 +449,6 @@ namespace TypecursusApplicatie
                 run.Foreground = Brushes.Red;
             }
         }
+
     }
 }

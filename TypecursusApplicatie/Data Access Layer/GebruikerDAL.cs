@@ -353,5 +353,161 @@ namespace TypecursusApplicatie.Data_Access_Layer
             }
         }
 
+        public bool IsModuleCompleted(int userId, int moduleId)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                string query = "SELECT ModuleVoltooid FROM GebruikersVoortgang WHERE GebruikersID = @UserId AND ModuleID = @ModuleId";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserId", userId);
+                cmd.Parameters.AddWithValue("@ModuleId", moduleId);
+
+                try
+                {
+                    conn.Open();
+                    var result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return Convert.ToBoolean(result);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error in IsModuleCompleted: " + ex.Message);
+                }
+            }
+            return false; // Default to false if no record found or in case of an exception
+        }
+
+        public (List<double> Values, List<string> TimeLabels) GetWpmDataForUser(int userId)
+        {
+            List<double> values = new List<double>();
+            List<string> timeLabels = new List<string>();
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                string query = "SELECT GebruikersWPM, PogingDatum FROM ModulePogingen WHERE GebruikersID = @UserID ORDER BY PogingDatum";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserID", userId);
+
+                try
+                {
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            values.Add(Convert.ToDouble(reader["GebruikersWPM"]));
+                            timeLabels.Add(Convert.ToDateTime(reader["PogingDatum"]).ToShortDateString());
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error in GetWpmDataForUser: " + ex.Message);
+                }
+            }
+
+            return (values, timeLabels);
+        }
+
+        public Gebruiker GetGebruikerById(int userId)
+        {
+            Gebruiker gebruiker = null;
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                string query = "SELECT * FROM Gebruikers WHERE GebruikersID = @UserId";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserId", userId);
+
+                try
+                {
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            gebruiker = new Gebruiker
+                            {
+                                GebruikersID = Convert.ToInt32(reader["GebruikersID"]),
+                                Voornaam = reader["Voornaam"].ToString(),
+                                Achternaam = reader["Achternaam"].ToString(),
+                                Emailadres = reader["Emailadres"].ToString(),
+                                // Other fields if necessary
+                            };
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error in GetGebruikerById: " + ex.Message);
+                }
+            }
+            return gebruiker;
+        }
+
+        public IEnumerable<ModulePogingen> GetModulePogingenByUserId(int userId)
+        {
+            List<ModulePogingen> pogingen = new List<ModulePogingen>();
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                string query = "SELECT * FROM ModulePogingen WHERE GebruikersID = @UserId ORDER BY PogingDatum";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserId", userId);
+
+                try
+                {
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            pogingen.Add(new ModulePogingen
+                            {
+                                PogingID = Convert.ToInt32(reader["PogingID"]),
+                                GebruikersID = Convert.ToInt32(reader["GebruikersID"]),
+                                ModuleID = Convert.ToInt32(reader["ModuleID"]),
+                                GebruikersWPM = Convert.ToInt32(reader["GebruikersWPM"]),
+                                GebruikersNauwkeurigheid = Convert.ToInt32(reader["GebruikersNauwkeurigheid"]),
+                                PogingDatum = Convert.ToDateTime(reader["PogingDatum"])
+                                // Other fields if necessary
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error in GetModulePogingenByUserId: " + ex.Message);
+                }
+            }
+            return pogingen;
+        }
+
+        public int GetCompletedLevelsCount(int userId)
+        {
+            int completedLevelsCount = 0;
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                string query = @"
+                SELECT COUNT(DISTINCT LevelID) AS CompletedLevels
+                FROM Modules
+                INNER JOIN GebruikersVoortgang ON Modules.ModuleID = GebruikersVoortgang.ModuleID
+                WHERE GebruikersVoortgang.GebruikersID = @UserId AND GebruikersVoortgang.ModuleVoltooid = TRUE";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserId", userId);
+
+                try
+                {
+                    conn.Open();
+                    completedLevelsCount = Convert.ToInt32(cmd.ExecuteScalar());
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error in GetCompletedLevelsCount: " + ex.Message);
+                }
+            }
+            return completedLevelsCount;
+        }
+
     }
 }

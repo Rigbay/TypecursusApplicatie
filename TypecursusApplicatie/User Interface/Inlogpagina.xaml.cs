@@ -83,6 +83,11 @@ namespace TypecursusApplicatie
             }
         }
 
+        private void AccountButton_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.LoadAccountControl();
+        }
+
         private void InlogButton_Click(object sender, RoutedEventArgs e)
         {
             if (!(mainWindow.MainContent.Content is Inlogpagina))

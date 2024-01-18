@@ -1,6 +1,10 @@
 ﻿using System.Windows;
 using System.ComponentModel;
 using TypecursusApplicatie.BusinessLogicLayer;
+using System.Collections.ObjectModel;
+using TypecursusApplicatie.Data_Access_Layer;
+using TypecursusApplicatie.Models;
+using System.Windows.Controls;
 
 namespace TypecursusApplicatie
 {
@@ -11,6 +15,7 @@ namespace TypecursusApplicatie
             InitializeComponent();
             this.DataContext = this;
             this.WindowState = WindowState.Maximized;
+            LoadLevels();
             LoadLoginControl();
         }
 
@@ -50,6 +55,11 @@ namespace TypecursusApplicatie
             MainContent.Content = new Homepagina(this);
         }
 
+        public void LoadAccountControl()
+        {
+            MainContent.Content = new Statistiekenpagina(this);
+        }
+
         public void LogoutUser()
         {
             UserSession.Logout();
@@ -61,6 +71,11 @@ namespace TypecursusApplicatie
         private void HomeButton_Click(object sender, RoutedEventArgs e)
         {
             LoadHomeControl();
+        }
+
+        private void AccountButton_Click(object sender, RoutedEventArgs e)
+        {
+            LoadAccountControl();
         }
 
         private void Logo_Click(object sender, RoutedEventArgs e)
@@ -77,6 +92,53 @@ namespace TypecursusApplicatie
         {
             MainContent.Content = new ModuleDetailpagina(this, moduleId);
         }
+
+        private ObservableCollection<Level> _levels;
+
+        public ObservableCollection<Level> Levels
+        {
+            get { return _levels; }
+            set
+            {
+                _levels = value;
+                OnPropertyChanged(nameof(Levels));
+            }
+        }
+
+        public void LoadLevels()
+        {
+            GebruikerDAL gebruikerDAL = new GebruikerDAL();
+            var alleLevels = gebruikerDAL.GetAllLevels();
+            Levels = new ObservableCollection<Level>();
+
+            int userId = UserSession.CurrentUserID;
+            bool previousLevelCompleted = true;
+
+            foreach (var level in alleLevels)
+            {
+                int progress = gebruikerDAL.GetProgressForLevel(userId, level.LevelID);
+                level.ProgressPercentage = progress;
+                level.ProgressDisplay = $"{progress}% completed";
+                level.IsUnlocked = previousLevelCompleted;
+                Levels.Add(level);
+                previousLevelCompleted = level.ProgressPercentage == 100;
+            }
+
+            // Notify pages that levels are loaded
+            OnPropertyChanged(nameof(Levels));
+        }
+
+        public void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var comboBox = sender as ComboBox;
+            var selectedLevel = comboBox.SelectedItem as Level;
+            if (selectedLevel != null && selectedLevel.IsUnlocked)
+            {
+                LoadModuleOverzichtspagina(selectedLevel.LevelID);
+                comboBox.SelectedIndex = -1; // Reset selection after navigation
+            }
+        }
+
 
 
     }

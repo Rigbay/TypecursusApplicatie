@@ -27,13 +27,25 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="10"/>
         </Style>
+        <Style x:Key="LogoHoverStyle" TargetType="Border">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#A2B1CB"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
 
     <DockPanel>
         <Border DockPanel.Dock="Top" Background="Gray" Height="60">
             <DockPanel HorizontalAlignment="Stretch">
                 <ToggleButton x:Name="SidebarToggle" Content="☰" Width="60" Height="60" DockPanel.Dock="Left" Click="SidebarToggle_Click"/>
-                <Image Source="/Images/Logo1.png" Width="60" Height="60" DockPanel.Dock="Right" HorizontalAlignment="Right" MouseDown="Logo_Click"/>
+                <Border DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource LogoHoverStyle}" MouseDown="Logo_Click">
+                    <Image Source="/Images/Logo1.png" Width="60" Height="60"/>
+                </Border>
             </DockPanel>
         </Border>
 
@@ -56,7 +68,8 @@
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10">
                 <StackPanel x:Name="LoggedInPanel" Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVisConverter}}" Orientation="Horizontal">
                     <Button Content="Account" 
-                            Style="{StaticResource SidebarButtonStyle}" 
+                            Style="{StaticResource SidebarButtonStyle}"
+                            Click="AccountButton_Click"
                             Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
                     <Button Content="Uitloggen" 
                             Style="{StaticResource SidebarButtonStyle}" 

@@ -7,6 +7,10 @@ using TypecursusApplicatie.BusinessLogicLayer;
 using TypecursusApplicatie.Models;
 using System.Windows.Input;
 using System.Diagnostics;
+using System.Globalization;
+using System.Windows.Data;
+using System.Windows.Media;
+using System;
 
 namespace TypecursusApplicatie
 {
@@ -43,15 +47,20 @@ namespace TypecursusApplicatie
             Levels.Clear();
 
             int userId = UserSession.CurrentUserID; // Get current user ID
+            bool previousLevelCompleted = true; // Assuming level 1 is always unlocked
+
             foreach (var level in alleLevels)
             {
                 int progress = gebruikerDAL.GetProgressForLevel(userId, level.LevelID);
                 level.ProgressPercentage = progress;
                 level.ProgressDisplay = GenerateProgressDisplay(progress);
+                level.IsUnlocked = previousLevelCompleted; // Unlock the level if the previous level is completed
 
                 Levels.Add(level);
+                previousLevelCompleted = level.ProgressPercentage == 100; // Update for next iteration
             }
         }
+
 
         private string GenerateProgressDisplay(int progress)
         {
@@ -62,7 +71,7 @@ namespace TypecursusApplicatie
         {
             Button clickedButton = sender as Button;
             Level selectedLevel = clickedButton.DataContext as Level;
-            if (selectedLevel != null)
+            if (selectedLevel != null && selectedLevel.IsUnlocked)
             {
                 mainWindow.LoadModuleOverzichtspagina(selectedLevel.LevelID);
             }
@@ -75,6 +84,11 @@ namespace TypecursusApplicatie
                 mainWindow = main;
             }
         }
+        private void AccountButton_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.LoadAccountControl();
+        }
+
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             mainWindow.LoadLoginControl();
@@ -110,5 +124,21 @@ namespace TypecursusApplicatie
         {
             mainWindow.LoadHomeControl();
         }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var comboBox = sender as ComboBox;
+            var selectedLevel = comboBox.SelectedItem as Level;
+            if (selectedLevel != null && selectedLevel.IsUnlocked)
+            {
+                mainWindow.LoadModuleOverzichtspagina(selectedLevel.LevelID);
+            }
+            else
+            {
+                // Reset the selection if the level is locked
+                comboBox.SelectedIndex = -1;
+            }
+        }
+
     }
 }

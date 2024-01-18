@@ -11,6 +11,8 @@
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+        <local:BooleanToInverseVisibilityConverter x:Key="BoolToInverseVisConverter"/>
+        <local:BooleanToGrayConverter x:Key="BoolToGrayConverter"/>
         <Style x:Key="LinkButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
@@ -30,28 +32,41 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="10"/>
         </Style>
+        <Style x:Key="LogoHoverStyle" TargetType="Border">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#A2B1CB"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
     </UserControl.Resources>
 
     <DockPanel>
         <Border DockPanel.Dock="Top" Background="Gray" Height="60">
             <DockPanel HorizontalAlignment="Stretch">
                 <ToggleButton x:Name="SidebarToggle" Content="☰" Width="60" Height="60" DockPanel.Dock="Left" Click="SidebarToggle_Click"/>
-                <Image Source="/Images/Logo1.png" Width="60" Height="60" DockPanel.Dock="Right" HorizontalAlignment="Right" MouseDown="Logo_Click"/>
+                <Border DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource LogoHoverStyle}" MouseDown="Logo_Click">
+                    <Image Source="/Images/Logo1.png" Width="60" Height="60"/>
+                </Border>
             </DockPanel>
         </Border>
 
         <DockPanel x:Name="Sidebar" DockPanel.Dock="Left" Background="Gray" Width="0">
             <StackPanel DockPanel.Dock="Top">
                 <Button Content="Home" Style="{StaticResource SidebarButtonStyle}" Click="HomeButton_Click" Width="100" HorizontalAlignment="Center"/>
-                <ComboBox Width="180" Margin="10">
-                    <ComboBoxItem Content="Level 1"/>
-                    <ComboBoxItem Content="Level 2"/>
-                    <ComboBoxItem Content="Level 3"/>
-                    <ComboBoxItem Content="Level 4"/>
-                    <ComboBoxItem Content="Level 5"/>
-                    <ComboBoxItem Content="Level 6"/>
-                    <ComboBoxItem Content="Level 7"/>
-                    <ComboBoxItem Content="Level 8"/>
+                <ComboBox Width="180" Margin="10" ItemsSource="{Binding Levels}" SelectionChanged="ComboBox_SelectionChanged">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding LevelNaam}" Margin="5" Foreground="{Binding IsUnlocked, Converter={StaticResource BoolToGrayConverter}}" />
+                                <Image Source="/Images/lock-icon-2.png" Width="20" Height="20" Visibility="{Binding IsUnlocked, Converter={StaticResource BoolToInverseVisConverter}}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
                 </ComboBox>
             </StackPanel>
 
@@ -63,6 +78,7 @@
             Orientation="Horizontal">
                     <Button Content="Account" 
                 Style="{StaticResource SidebarButtonStyle}" 
+                Click="AccountButton_Click"
                 Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
                     <Button Content="Uitloggen" 
                 Style="{StaticResource SidebarButtonStyle}" 
@@ -93,7 +109,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Text="Levelspagina" FontSize="30" FontWeight="Bold" Margin="20" HorizontalAlignment="Center"/>
+            <TextBlock Grid.Row="0" Text="Levelspagina" FontSize="36" FontWeight="Bold" Margin="0,-40,0,120" HorizontalAlignment="Center" VerticalAlignment="Top"/>
 
             <ItemsControl x:Name="LevelsItemsControl" Grid.Row="1" ItemsSource="{Binding Levels}">
                 <ItemsControl.ItemsPanel>
@@ -105,17 +121,35 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button BorderThickness="0" Background="LightGray" Click="LevelTile_Click">
+                        <Button BorderThickness="0" Click="LevelTile_Click" IsEnabled="{Binding IsUnlocked}">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
-                                    <Border x:Name="Border" Margin="30"  Padding="50" CornerRadius="15" Background="LightGray" Width="350" Height="200">
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding LevelNaam}" FontWeight="Bold" HorizontalAlignment="Center"/>
-                                            <ProgressBar Minimum="0" Maximum="100" Value="{Binding ProgressPercentage}" Height="20" Margin="10"/>
-                                            <TextBlock Text="{Binding ProgressDisplay}" HorizontalAlignment="Center"/>
-                                        </StackPanel>
+                                    <Border x:Name="Border" Margin="20" Padding="0" CornerRadius="15" Background="LightGray" Width="400" Height="250">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="3*"/>
+                                                <!-- Top half -->
+                                                <RowDefinition Height="2*"/>
+                                                <!-- Bottom half -->
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Level Title -->
+                                            <TextBlock Text="{Binding LevelNaam}" FontWeight="Bold" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Margin="10"/>
+
+                                            <!-- Lock Icon and Progress Bar -->
+                                            <StackPanel Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Center">
+                                                <Image Source="/Images/lock-icon-2.png" Visibility="{Binding IsUnlocked, Converter={StaticResource BoolToInverseVisConverter}}" Width="80" Height="80" VerticalAlignment="Top"  Margin="0,-25,0,0"/>
+                                                <ProgressBar Minimum="0" Maximum="100" Value="{Binding ProgressPercentage}" Width="200" Height="20" Visibility="{Binding IsUnlocked, Converter={StaticResource BoolToVisConverter}}"/>
+                                                <TextBlock Text="{Binding ProgressDisplay}" HorizontalAlignment="Center" Visibility="{Binding IsUnlocked, Converter={StaticResource BoolToVisConverter}}"/>
+                                            </StackPanel>
+                                        </Grid>
                                     </Border>
                                     <ControlTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsUnlocked}" Value="False">
+                                            <Setter TargetName="Border" Property="Background" Value="White"/>
+                                            <Setter TargetName="Border" Property="BorderBrush" Value="Gray"/>
+                                            <Setter TargetName="Border" Property="BorderThickness" Value="1"/>
+                                        </DataTrigger>
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter TargetName="Border" Property="Background" Value="Gray"/>
                                         </Trigger>
@@ -125,8 +159,9 @@
                         </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
+
             </ItemsControl>
+            
         </Grid>
-        
     </DockPanel>
 </UserControl>

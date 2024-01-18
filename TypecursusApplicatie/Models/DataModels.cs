@@ -36,6 +36,7 @@ namespace TypecursusApplicatie.Models
         public int ProgressPercentage { get; set; }
         [NotMapped]
         public string ProgressDisplay { get; set; }
+        public bool IsUnlocked { get; set; }
     }
 
     public class Module
@@ -55,6 +56,8 @@ namespace TypecursusApplicatie.Models
         public virtual Level Level { get; set; }
         public virtual ICollection<GebruikersVoortgang> Voortgang { get; set; }
         public virtual ICollection<ModulePogingen> Pogingen { get; set; }
+
+        public bool IsModuleCompleted { get; set; }
     }
 
     public class GebruikersVoortgang

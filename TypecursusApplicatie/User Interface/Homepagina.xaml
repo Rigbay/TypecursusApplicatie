@@ -3,11 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:local="clr-namespace:TypecursusApplicatie">
+
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+        <local:BooleanToInverseVisibilityConverter x:Key="BoolToInverseVisConverter"/>
+        <local:BooleanToGrayConverter x:Key="BoolToGrayConverter"/>
         <Style x:Key="LinkButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
@@ -27,33 +31,50 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="10"/>
         </Style>
+        <Style x:Key="LogoHoverStyle" TargetType="Border">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#A2B1CB"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
 
     <DockPanel>
         <Border DockPanel.Dock="Top" Background="Gray" Height="60">
             <DockPanel HorizontalAlignment="Stretch">
                 <ToggleButton x:Name="SidebarToggle" Content="☰" Width="60" Height="60" DockPanel.Dock="Left" Click="SidebarToggle_Click"/>
-                <Image Source="/Images/Logo1.png" Width="60" Height="60" DockPanel.Dock="Right" HorizontalAlignment="Right" MouseDown="Logo_Click"/>
+                <Border DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource LogoHoverStyle}" MouseDown="Logo_Click">
+                    <Image Source="/Images/Logo1.png" Width="60" Height="60"/>
+                </Border>
             </DockPanel>
         </Border>
         <DockPanel x:Name="Sidebar" DockPanel.Dock="Left" Background="Gray" Width="0">
             <StackPanel DockPanel.Dock="Top">
                 <Button Content="Home" Style="{StaticResource SidebarButtonStyle}" Click="HomeButton_Click" Width="100" HorizontalAlignment="Center"/>
-                <ComboBox Width="180" Margin="10">
-                    <ComboBoxItem Content="Level 1"/>
-                    <ComboBoxItem Content="Level 2"/>
-                    <ComboBoxItem Content="Level 3"/>
-                    <ComboBoxItem Content="Level 4"/>
-                    <ComboBoxItem Content="Level 5"/>
-                    <ComboBoxItem Content="Level 6"/>
-                    <ComboBoxItem Content="Level 7"/>
-                    <ComboBoxItem Content="Level 8"/>
+                <ComboBox Width="180" Margin="10"
+                            ItemsSource="{Binding Levels}"
+                            SelectionChanged="ComboBox_SelectionChanged">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding LevelNaam}" Margin="5"
+                           Foreground="{Binding IsUnlocked, Converter={StaticResource BoolToGrayConverter}}" />
+                                <Image Source="/Images/lock-icon-2.png" Width="20" Height="20"
+                       Visibility="{Binding IsUnlocked, Converter={StaticResource BoolToInverseVisConverter}}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
                 </ComboBox>
             </StackPanel>
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10">
                 <StackPanel x:Name="LoggedInPanel" Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVisConverter}}" Orientation="Horizontal">
                     <Button Content="Account" 
                         Style="{StaticResource SidebarButtonStyle}" 
+                        Click="AccountButton_Click"
                         Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BoolToVisConverter}}"/>
                     <Button Content="Uitloggen" 
                         Style="{StaticResource SidebarButtonStyle}" 
@@ -76,12 +97,12 @@
         
         <StackPanel 
             VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock Text="Homepagina" FontSize="30" FontWeight="Bold" Margin="0,20,0,20" HorizontalAlignment="Center"/>
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Height="500" Width="800">
-                <TextBlock TextWrapping="Wrap" TextAlignment="Center"
+            <TextBlock Text="Homepagina" FontSize="36" FontWeight="Bold" Margin="0,-40,0,120" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Height="500" Width="1200">
+                <TextBlock TextWrapping="Wrap" TextAlignment="Center" FontSize="20"
                            Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ultricies varius aliquet. Proin id ex dictum, vulputate justo ac, feugiat ligula. Cras laoreet consectetur libero id luctus. Morbi eget porttitor libero. Vestibulum lobortis gravida porta. Duis et sollicitudin libero, et mattis magna. Mauris at erat interdum, blandit lacus nec, eleifend arcu. Curabitur sit amet diam dapibus dolor venenatis pharetra. Suspendisse congue dui non odio semper pulvinar. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In lectus mi, cursus nec sapien nec, tempus malesuada dui.Aliquam mollis elit eget ipsum mollis, sit amet vestibulum neque eleifend. Nunc id magna nec sapien pretium tempus eu ac odio. Nam nec neque sed urna eleifend imperdiet nec a nibh. Nulla vestibulum tellus ligula, a sollicitudin massa commodo id. In id ligula sit amet dui euismod auctor id id purus. Etiam ornare augue urna. Aliquam non velit eu erat semper elementum. Maecenas ut dolor ornare, molestie nulla vitae, ultricies tortor. Sed ultricies bibendum porta. Nam non libero vel est molestie accumsan non a nibh. Quisque non urna est. Vivamus porttitor massa neque, eu vehicula dui ullamcorper vel. Quisque vel dui odio. Sed convallis sagittis sapien et varius. Maecenas cursus diam ac nisl sollicitudin, vel dapibus risus vestibulum. Integer nec vehicula velit. Morbi id facilisis turpis. Donec lacinia ex ut dolor blandit, a varius dui volutpat. Donec commodo justo nec nunc consectetur, vitae maximus ante consectetur. Duis commodo mauris volutpat elit condimentum cursus. Nam ac sapien ligula. Donec quis nulla porta, feugiat nisi ut, tristique nibh." />
                 </ScrollViewer>
-            <Button Content="Naar Levels" Height="30" Width="200" Click="LevelsPagina_Click"/>
+            <Button Content="Levels" Height="30" Width="200" Click="LevelsPagina_Click"/>
         </StackPanel>  
         
     </DockPanel>

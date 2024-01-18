@@ -1,8 +1,16 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
+using System.Collections.ObjectModel;
+using System.Linq;
 using TypecursusApplicatie.Data_Access_Layer;
+using TypecursusApplicatie.BusinessLogicLayer;
 using TypecursusApplicatie.Models;
+using System.Windows.Input;
+using System.Diagnostics;
+using System.Globalization;
+using System.Windows.Data;
+using System.Windows.Media;
+using System;
 
 namespace TypecursusApplicatie
 {
@@ -31,6 +39,11 @@ namespace TypecursusApplicatie
             {
                 mainWindow = main;
             }
+        }
+
+        private void AccountButton_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.LoadAccountControl();
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -69,5 +82,19 @@ namespace TypecursusApplicatie
             mainWindow.LoadHomeControl();
         }
 
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var comboBox = sender as ComboBox;
+            var selectedLevel = comboBox.SelectedItem as Level;
+            if (selectedLevel != null && selectedLevel.IsUnlocked)
+            {
+                mainWindow.LoadModuleOverzichtspagina(selectedLevel.LevelID);
+            }
+            else
+            {
+                // Reset the selection if the level is locked
+                comboBox.SelectedIndex = -1;
+            }
+        }
     }
 }

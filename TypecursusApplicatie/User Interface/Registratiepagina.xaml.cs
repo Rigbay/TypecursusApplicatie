@@ -32,6 +32,10 @@ namespace TypecursusApplicatie
             }
         }
 
+        private void AccountButton_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.LoadAccountControl();
+        }
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             mainWindow.LoadLoginControl();
