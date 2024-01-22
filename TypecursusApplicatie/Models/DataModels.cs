@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Windows.Media;
 
 namespace TypecursusApplicatie.Models
 {
@@ -96,14 +97,16 @@ namespace TypecursusApplicatie.Models
 
     public class Badge
     {
-        [Key]
         public int BadgeID { get; set; }
         public string BadgeNaam { get; set; }
         public string Criteria { get; set; }
-
-        // Navigatie-eigenschap
-        public virtual ICollection<GebruikersBadges> Gebruikers { get; set; }
+        public string BadgeAfbeelding { get; set; } // Image file name for the badge
+        public string BadgeBeschrijving { get; set; } // Description for the badge
+        public bool IsUnlocked { get; set; } // Indicates if the badge is unlocked for the user
+        public DateTime? BadgeBehaalDatum { get; set; } // Nullable DateTime for badges that haven't been achieved yet
+        public ImageSource ImageSource { get; set; } // ImageSource for the badge
     }
+
 
     public class GebruikersBadges
     {

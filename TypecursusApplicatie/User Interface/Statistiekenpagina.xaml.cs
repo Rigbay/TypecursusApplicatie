@@ -16,6 +16,7 @@ namespace TypecursusApplicatie
     {
         private MainWindow mainWindow;
         private GebruikerDAL gebruikerDAL;
+        private List<ModulePogingen> pogingen;
 
         public SeriesCollection WpmSeries { get; set; }
         public List<string> TimeLabels { get; set; }
@@ -63,40 +64,87 @@ namespace TypecursusApplicatie
             AchternaamTextBlock.Text = gebruiker.Achternaam;
             EmailadresTextBlock.Text = gebruiker.Emailadres;
 
-            // Load module and level completion data
             var modulePogingen = gebruikerDAL.GetModulePogingenByUserId(userId);
-            CompletedModulesCount.Text = modulePogingen.Count().ToString();
-            CompletedLevelsCount.Text = gebruikerDAL.GetCompletedLevelsCount(userId).ToString();
+            LoadWpmChartData(modulePogingen); // Pass the list to the method
 
-            LoadWpmChartData(modulePogingen);
+            // Load completed modules count
+            var completedModules = gebruikerDAL.GetCompletedModulesByUserId(userId);
+            CompletedModulesCount.Text = completedModules.ToString();
+
+            // Load earned badges count
+            var earnedBadges = gebruikerDAL.GetEarnedBadgesCountByUserId(userId);
+            CompletedLevelsCount.Text = earnedBadges.ToString();
+
+            // Load module completion data
+            int completedModulesCount = gebruikerDAL.GetCompletedModulesByUserId(userId);
+            CompletedModulesCount.Text = completedModulesCount.ToString();
+
+            // Load badge data
+            int earnedBadgesCount = gebruikerDAL.GetEarnedBadgesCountByUserId(userId);
+            CompletedLevelsCount.Text = earnedBadgesCount.ToString();
+
+            pogingen = gebruikerDAL.GetModulePogingenByUserId(userId).ToList();
+            LoadWpmChartData(pogingen);
+
+
         }
+
+        private int dataPointDisplayRange = 20; // Number of points to display at once
+        private int currentDataPointStartIndex = 0; // Starting index for the displayed data points
 
         private void LoadWpmChartData(IEnumerable<ModulePogingen> pogingen)
         {
-            var groupedPogingen = pogingen.GroupBy(p => p.PogingDatum.Date)
-                                          .Select(group => new
-                                          {
-                                              Date = group.Key,
-                                              AverageWpm = group.Average(p => p.GebruikersWPM)
-                                          })
-                                          .OrderBy(p => p.Date)
-                                          .ToList();
+            var sortedPogingen = pogingen.Where(p => p.GebruikersWPM > 0)
+                                         .OrderByDescending(p => p.PogingDatum) // Changed to OrderByDescending
+                                         .ToList();
+            this.pogingen = sortedPogingen;
 
-            ChartValues<double> chartValues = new ChartValues<double>(groupedPogingen.Select(p => p.AverageWpm));
-            TimeLabels = groupedPogingen.Select(p => p.Date.ToShortDateString()).ToList();
+            UpdateVisibleDataPoints();
+        }
+
+
+        private void UpdateVisibleDataPoints()
+        {
+            int endIndex = Math.Min(currentDataPointStartIndex + dataPointDisplayRange, pogingen.Count);
+            var visiblePogingen = pogingen.GetRange(currentDataPointStartIndex, endIndex - currentDataPointStartIndex);
+
+            var chartValues = new ChartValues<double>(visiblePogingen.Select(p => (double)p.GebruikersWPM));
+
+            // Combine date and time for labels
+            var combinedLabels = visiblePogingen.Select(p => p.PogingDatum.ToString("dd-MM-yyyy HH:mm")).ToList();
 
             WpmSeries = new SeriesCollection
-            {
-                new LineSeries
-                {
-                    Values = chartValues,
-                    Title = "Average WPM"
-                }
-            };
+    {
+        new LineSeries
+        {
+            Values = chartValues,
+            Title = "",
+            DataLabels = false,
+            LabelPoint = point => $"WPM {point.Y}",
+            PointGeometry = DefaultGeometries.Circle,
+            PointGeometrySize = 10
+        }
+    };
 
             WpmChart.Series = WpmSeries;
-            WpmChart.AxisX.First().Labels = TimeLabels;
+            WpmChart.AxisX.First().Labels = combinedLabels; // Assigning combined date and time labels
         }
+
+
+        private void PreviousDataPointsButton_Click(object sender, RoutedEventArgs e)
+        {
+            currentDataPointStartIndex = Math.Max(0, currentDataPointStartIndex - dataPointDisplayRange);
+            UpdateVisibleDataPoints();
+        }
+
+        private void NextDataPointsButton_Click(object sender, RoutedEventArgs e)
+        {
+            currentDataPointStartIndex = Math.Min(pogingen.Count - dataPointDisplayRange, currentDataPointStartIndex + dataPointDisplayRange);
+            UpdateVisibleDataPoints();
+        }
+
+
+
 
         // The rest of your event handlers and methods should go here
 
@@ -107,6 +155,15 @@ namespace TypecursusApplicatie
                 mainWindow = main;
             }
         }
+
+        private void BadgesButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(mainWindow.MainContent.Content is BadgeOverzichtspagina))
+            {
+                mainWindow.LoadBadgeOverzichtspagina();
+            }
+        }  
+
         private void AccountButton_Click(object sender, RoutedEventArgs e)
         {
             if (!(mainWindow.MainContent.Content is Statistiekenpagina))

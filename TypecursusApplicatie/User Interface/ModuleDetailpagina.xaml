@@ -6,6 +6,7 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              xmlns:local="clr-namespace:TypecursusApplicatie">
+    
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
         <local:BooleanToInverseVisibilityConverter x:Key="BoolToInverseVisConverter"/>
@@ -82,7 +83,6 @@
             </StackPanel>
         </DockPanel>
 
-
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*"/>
@@ -90,7 +90,7 @@
                 <RowDefinition Height="Auto"/>
                 <!-- Module Name and Requirements -->
                 <RowDefinition Height="*"/>
-                <!-- Typing Test Content -->
+                <!-- Typing Test Content - Resizable row -->
                 <RowDefinition Height="Auto"/>
                 <!-- WPM, Accuracy, Timer -->
                 <RowDefinition Height="Auto"/>
@@ -102,31 +102,39 @@
             </Grid.RowDefinitions>
 
             <!-- Module Name and Requirements -->
-            <StackPanel Grid.Row="0" Orientation="Vertical">
+            <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top">
                 <TextBlock x:Name="lblModuleName" FontSize="24" FontWeight="Bold" Margin="10" HorizontalAlignment="Center"/>
                 <TextBlock x:Name="lblModuleRequirements" FontSize="16" Margin="10" HorizontalAlignment="Center"/>
             </StackPanel>
 
             <!-- Typing Test Content -->
-            <RichTextBox x:Name="rtxtTypetestText" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" Height="150" Width="700" IsReadOnly="True" Margin="10"/>
+            <ScrollViewer Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top"
+              Height="150" Width="1250"
+              VerticalScrollBarVisibility="Disabled" 
+              HorizontalScrollBarVisibility="Disabled">
+                <RichTextBox x:Name="rtxtTypetestText" IsReadOnly="True" Margin="10"
+                 Height="100" FontSize="30" Padding="5" PreviewMouseWheel="RtxtTypetestText_PreviewMouseWheel">
+                    <!-- Content is dynamically loaded from the database -->
+                </RichTextBox>
+            </ScrollViewer>
+
 
             <!-- WPM, Accuracy, Timer -->
-            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
                 <TextBlock x:Name="lblWPM" FontSize="16" Margin="10" Text="WPM: 0"/>
                 <TextBlock x:Name="lblAccuracy" FontSize="16" Margin="10" Text="Accuracy: 0%"/>
                 <TextBlock x:Name="lblTimer" FontSize="16" Margin="10" Text="Tijd: 60"/>
             </StackPanel>
 
             <!-- Typing Area -->
-            <TextBox x:Name="txtTypingArea" Grid.Row="3" Height="40" Width="700" Margin="10" HorizontalAlignment="Center" TextChanged="TxtTypingArea_TextChanged" PreviewKeyDown="TxtTypingArea_PreviewKeyDown"/>
-
+            <TextBox x:Name="txtTypingArea" Grid.Row="4" Height="40" Width="700" Margin="10" HorizontalAlignment="Center" TextChanged="TxtTypingArea_TextChanged" PreviewKeyDown="TxtTypingArea_PreviewKeyDown"/>
 
             <!-- Buttons -->
-            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button x:Name="btnReset" Content="Reset" Width="100" Margin="5" Click="BtnReset_Click"/>
                 <Button x:Name="btnBack" Content="Terug" Width="100" Margin="5" Click="BtnBack_Click"/>
             </StackPanel>
         </Grid>
-
+        
     </DockPanel>
 </UserControl>

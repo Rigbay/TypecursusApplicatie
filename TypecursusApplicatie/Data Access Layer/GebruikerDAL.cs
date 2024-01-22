@@ -509,5 +509,274 @@ namespace TypecursusApplicatie.Data_Access_Layer
             return completedLevelsCount;
         }
 
+        public int GetCompletedModulesByUserId(int userId)
+        {
+            using (var conn = new MySqlConnection(connectionString))
+            {
+                string query = "SELECT COUNT(*) FROM GebruikersVoortgang WHERE GebruikersID = @UserId AND ModuleVoltooid = TRUE";
+                using (var cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    conn.Open();
+                    return Convert.ToInt32(cmd.ExecuteScalar());
+                }
+            }
+        }
+
+        public int GetEarnedBadgesCountByUserId(int userId)
+        {
+            using (var conn = new MySqlConnection(connectionString))
+            {
+                string query = "SELECT COUNT(*) FROM GebruikersBadges WHERE GebruikersID = @UserId";
+                using (var cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    conn.Open();
+                    return Convert.ToInt32(cmd.ExecuteScalar());
+                }
+            }
+        }
+
+        public List<Badge> GetAllBadges()
+        {
+            List<Badge> badges = new List<Badge>();
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                string query = "SELECT BadgeID, BadgeNaam, Criteria, BadgeAfbeelding, BadgeBeschrijving FROM Badges";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                try
+                {
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            badges.Add(new Badge
+                            {
+                                BadgeID = Convert.ToInt32(reader["BadgeID"]),
+                                BadgeNaam = reader["BadgeNaam"].ToString(),
+                                Criteria = reader["Criteria"].ToString(),
+                                BadgeAfbeelding = reader["BadgeAfbeelding"].ToString(),
+                                BadgeBeschrijving = reader["BadgeBeschrijving"].ToString()
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error in GetAllBadges: " + ex.Message);
+                }
+            }
+            return badges;
+        }
+
+
+        public List<Badge> GetBadgesByUserId(int userId)
+        {
+            List<Badge> badges = new List<Badge>();
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                string query = "SELECT Badges.*, GebruikersBadges.BadgeBehaalDatum FROM Badges INNER JOIN GebruikersBadges ON Badges.BadgeID = GebruikersBadges.BadgeID WHERE GebruikersBadges.GebruikersID = @UserId";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserId", userId);
+
+                try
+                {
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            badges.Add(new Badge
+                            {
+                                BadgeID = Convert.ToInt32(reader["BadgeID"]),
+                                BadgeNaam = reader["BadgeNaam"].ToString(),
+                                Criteria = reader["Criteria"].ToString(),
+                                BadgeAfbeelding = reader["BadgeAfbeelding"].ToString(),
+                                BadgeBeschrijving = reader["BadgeBeschrijving"].ToString(),
+                                IsUnlocked = true, // Since it's coming from GebruikersBadges, it's unlocked
+                                BadgeBehaalDatum = reader.IsDBNull(reader.GetOrdinal("BadgeBehaalDatum")) ? (DateTime?)null : reader.GetDateTime(reader.GetOrdinal("BadgeBehaalDatum"))
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error in GetBadgesByUserId: " + ex.Message);
+                }
+            }
+            return badges;
+        }
+
+        public void AddBadgeToUser(int userId, int badgeId)
+        {             using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                string query = "INSERT INTO GebruikersBadges (GebruikersID, BadgeID, BadgeBehaalDatum) VALUES (@UserId, @BadgeId, NOW())";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserId", userId);
+                cmd.Parameters.AddWithValue("@BadgeId", badgeId);
+
+                try
+                {
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error in AddBadgeToUser: " + ex.Message);
+                }
+            }
+        }
+
+        public List<Badge> GetBadgesForUser(int userId)
+        {
+            // Implementation for getting badges for a user
+            List<Badge> badges = new List<Badge>();
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                string query = "SELECT * FROM Badges";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                try
+                {
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            badges.Add(new Badge
+                            {
+                                BadgeID = Convert.ToInt32(reader["BadgeID"]),
+                                BadgeNaam = reader["BadgeNaam"].ToString(),
+                                Criteria = reader["Criteria"].ToString(),
+                                BadgeAfbeelding = reader["BadgeAfbeelding"].ToString(),
+                                BadgeBeschrijving = reader["BadgeBeschrijving"].ToString(),
+                                IsUnlocked = false // Default to false
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error in GetBadgesForUser: " + ex.Message);
+                }
+            }
+            return badges;
+        }
+
+        public UserPerformance GetLatestPerformanceForUser(int userId)
+        {
+            UserPerformance performance = new UserPerformance();
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                // Query to get average WPM and Accuracy
+                string wpmAccuracyQuery = @"
+            SELECT AVG(GebruikersWPM) AS AvgWPM, AVG(GebruikersNauwkeurigheid) AS AvgAccuracy 
+            FROM ModulePogingen 
+            WHERE GebruikersID = @UserId";
+                MySqlCommand wpmAccuracyCmd = new MySqlCommand(wpmAccuracyQuery, conn);
+                wpmAccuracyCmd.Parameters.AddWithValue("@UserId", userId);
+
+                // Query to get levels completed
+                string levelsCompletedQuery = @"
+            SELECT COUNT(DISTINCT LevelID) AS LevelsCompleted
+            FROM Modules 
+            INNER JOIN GebruikersVoortgang ON Modules.ModuleID = GebruikersVoortgang.ModuleID
+            WHERE GebruikersVoortgang.GebruikersID = @UserId AND GebruikersVoortgang.ModuleVoltooid = TRUE";
+                MySqlCommand levelsCompletedCmd = new MySqlCommand(levelsCompletedQuery, conn);
+                levelsCompletedCmd.Parameters.AddWithValue("@UserId", userId);
+
+                // Query to check if all badges are earned
+                string allBadgesQuery = @"
+            SELECT (SELECT COUNT(*) FROM Badges) AS TotalBadges, 
+                   (SELECT COUNT(DISTINCT BadgeID) FROM GebruikersBadges WHERE GebruikersID = @UserId) AS EarnedBadges";
+                MySqlCommand allBadgesCmd = new MySqlCommand(allBadgesQuery, conn);
+                allBadgesCmd.Parameters.AddWithValue("@UserId", userId);
+
+                try
+                {
+                    conn.Open();
+
+                    // Execute WPM and Accuracy query
+                    using (var reader = wpmAccuracyCmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            performance.WPM = reader.IsDBNull(reader.GetOrdinal("AvgWPM")) ? 0 : reader.GetDouble("AvgWPM");
+                            performance.Accuracy = reader.IsDBNull(reader.GetOrdinal("AvgAccuracy")) ? 0 : reader.GetDouble("AvgAccuracy");
+                        }
+                    }
+
+                    // Execute Levels Completed query
+                    levelsCompletedCmd.ExecuteNonQuery();
+                    performance.LevelsCompleted = Convert.ToInt32(levelsCompletedCmd.ExecuteScalar());
+
+                    // Execute All Badges Earned query
+                    using (var reader = allBadgesCmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            int totalBadges = reader.GetInt32("TotalBadges");
+                            int earnedBadges = reader.GetInt32("EarnedBadges");
+                            performance.AllBadgesEarned = (earnedBadges == totalBadges);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error in GetLatestPerformanceForUser: " + ex.Message);
+                }
+            }
+
+            return performance;
+        }
+
+
+
+
+        public bool IsBadgeAwardedToUser(int userId, int badgeId)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                string query = "SELECT COUNT(1) FROM GebruikersBadges WHERE GebruikersID = @UserId AND BadgeID = @BadgeId";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserId", userId);
+                cmd.Parameters.AddWithValue("@BadgeId", badgeId);
+
+                try
+                {
+                    conn.Open();
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    return count > 0;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error in IsBadgeAwardedToUser: " + ex.Message);
+                    return false;
+                }
+            }
+        }
+
+
+
+
+
+    }
+    public class UserPerformance
+    {
+        // Define relevant properties
+        public int PogingID { get; set; }
+        public int GebruikersID { get; set; }
+        public int ModuleID { get; set; }
+        public int GebruikersWPM { get; set; }
+        public int GebruikersNauwkeurigheid { get; set; }
+        public DateTime PogingDatum { get; set; }
+        public double Accurracy { get; set; }
+        public double WPM { get; set; }
+        public int UserId { get; set; }
+        public double Accuracy { get; set; }
+        public int LevelsCompleted { get; set; } // Total number of levels completed by the user
+        public bool AllBadgesEarned { get; set; } // Indicates if all badges are earned
+
     }
 }

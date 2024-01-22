@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Linq;
 using System.Windows.Media;
 using System.Collections.Generic;
+using LiveCharts.Wpf;
 
 namespace TypecursusApplicatie
 {
@@ -24,6 +25,7 @@ namespace TypecursusApplicatie
         private Paragraph paragraph;
         private bool isTypingStarted = false;
         private List<string> wordsList;
+        private GebruikerDAL GebruikerDAL;
 
 
         /* Initialisatie van de Module Detailpagina */
@@ -33,6 +35,7 @@ namespace TypecursusApplicatie
         {
             InitializeComponent();
             this.mainWindow = mainWindow;
+            this.GebruikerDAL = new GebruikerDAL();
             typingTimer = new DispatcherTimer();
             typingTimer.Interval = TimeSpan.FromSeconds(1);
             typingTimer.Tick += TypingTimer_Tick;
@@ -117,15 +120,17 @@ namespace TypecursusApplicatie
 
             totalCharsTyped += typedText.Length;
 
+            Run run = FindRunByIndex(currentWordIndex);
+
             if (typedText.Equals(currentWord, StringComparison.OrdinalIgnoreCase))
             {
                 charsTypedCorrectly += typedText.Length;
-                MarkCurrentWordCorrect();
+                if (run != null) run.Foreground = Brushes.Green;
                 currentWordIndex++;
             }
             else
             {
-                MarkCurrentWordIncorrect();
+                if (run != null) run.Foreground = Brushes.Red;
             }
 
             HighlightCurrentWord();
@@ -133,7 +138,45 @@ namespace TypecursusApplicatie
             CalculateAccuracy();
 
             txtTypingArea.Clear();
+            ScrollToCurrentWord();
         }
+
+        private void ScrollToCurrentWord()
+        {
+            if (currentWordIndex >= wordsList.Count) return;
+
+            Run run = FindRunByIndex(currentWordIndex);
+            if (run != null)
+            {
+                Rect runPosition = run.ContentStart.GetCharacterRect(LogicalDirection.Forward);
+                double verticalOffset = rtxtTypetestText.VerticalOffset;
+                double viewportHeight = rtxtTypetestText.ViewportHeight;
+
+                // Check if the run is not visible in the current viewport
+                if (runPosition.Top < verticalOffset || runPosition.Bottom > verticalOffset + viewportHeight)
+                {
+                    // Scroll the RichTextBox to bring the run into view
+                    double newVerticalOffset = runPosition.Top - viewportHeight / 40; // Adjust as needed
+                    rtxtTypetestText.ScrollToVerticalOffset(Math.Max(0, newVerticalOffset));
+                }
+            }
+        }
+
+
+
+
+
+
+        // Helper method to check if the Run's position is within the visible area of RichTextBox
+        private bool IsRunVisible(Rect runPosition)
+        {
+            var visibleRange = new Rect(0, rtxtTypetestText.VerticalOffset,
+                                        rtxtTypetestText.ViewportWidth, rtxtTypetestText.ViewportHeight);
+            return visibleRange.Contains(runPosition.TopLeft) || visibleRange.Contains(runPosition.BottomRight);
+        }
+
+
+
 
         // Update de statistieken van het typen voor de huidige poging
         private void UpdateTypingStatistics()
@@ -161,6 +204,11 @@ namespace TypecursusApplicatie
                 CalculateWPM();
                 CalculateAccuracy();
             }
+        }
+
+        private void RtxtTypetestText_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            e.Handled = true; // This will disable scrolling in RichTextBox
         }
 
         // Geeft het huidige woord terug dat getypt moet worden
@@ -253,8 +301,70 @@ namespace TypecursusApplicatie
                 gebruikerDAL.UpdateUserProgress(userId, _currentModule.ModuleID, true);
             }
 
+            CheckAndAwardBadges();
             return isModuleCompleted;
         }
+
+        // Checkt of de gebruiker een badge heeft behaald
+        private void CheckAndAwardBadges()
+        {
+            int userId = UserSession.CurrentUserID;
+            UserPerformance userPerformance = GebruikerDAL.GetLatestPerformanceForUser(userId);
+            var allAvailableBadges = GebruikerDAL.GetAllBadges(); // Fetches all badges
+
+            foreach (var badge in allAvailableBadges)
+            {
+                // Check if badge is already awarded
+                if (!GebruikerDAL.IsBadgeAwardedToUser(userId, badge.BadgeID))
+                {
+                    if (CheckBadgeCriteria(userPerformance, badge.Criteria))
+                    {
+                        GebruikerDAL.AddBadgeToUser(userId, badge.BadgeID);
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            MessageBox.Show($"Gefeliciteerd! Je hebt de volgende badge verdiend!: {badge.BadgeNaam}");
+                        });
+                    }
+                }
+            }
+        }
+
+
+
+
+        //Contoleert of de gebruiker de criteria voor de badge heeft behaald
+        private bool CheckBadgeCriteria(UserPerformance performance, string criteria)
+        {
+            if (performance == null || string.IsNullOrEmpty(criteria))
+            {
+                // Handle the null case appropriately, maybe log an error or return false
+                return false;
+            }
+
+            if (criteria.EndsWith(" WPM"))
+            {
+                if (int.TryParse(criteria.Replace(" WPM", ""), out int targetWPM))
+                {
+                    return performance.WPM >= targetWPM;
+                }
+            }
+            else if (criteria.StartsWith("Level "))
+            {
+                if (int.TryParse(criteria.Substring(6), out int targetLevel))
+                {
+                    return performance.LevelsCompleted >= targetLevel;
+                }
+            }
+            else if (criteria == "Alle Badges Behaald")
+            {
+                return performance.AllBadgesEarned;
+            }
+
+            // If none of the above conditions are met, return false
+            return false;
+        }
+
+
 
         // Reset de typetest en de timer
         private void ResetTypingTest()
@@ -271,7 +381,12 @@ namespace TypecursusApplicatie
             lblTimer.Text = "Tijd: 60";
             lblWPM.Text = "WPM: 0";
             lblAccuracy.Text = "Accuracy: 0%";
+
+            // Reset scroll position to the top of the RichTextBox
+            rtxtTypetestText.CaretPosition = rtxtTypetestText.Document.ContentStart;
+            rtxtTypetestText.ScrollToHome();
         }
+
 
 
 

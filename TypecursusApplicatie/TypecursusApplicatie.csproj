@@ -129,8 +129,12 @@
     <Compile Include="Data Access Layer\DatabaseContext.cs" />
     <Compile Include="Models\BooleanToInverseVisibilityConverter.cs" />
     <Compile Include="Models\BooleanToGrayConverter.cs" />
+    <Compile Include="Models\GrayscaleConverter.cs" />
     <Compile Include="Models\CompletionStatusToColorConverter.cs" />
     <Compile Include="Models\DataModels.cs" />
+    <Compile Include="User Interface\BadgeOverzichtspagina.xaml.cs">
+      <DependentUpon>BadgeOverzichtspagina.xaml</DependentUpon>
+    </Compile>
     <Compile Include="User Interface\Inlogpagina.xaml.cs">
       <DependentUpon>Inlogpagina.xaml</DependentUpon>
     </Compile>
@@ -164,6 +168,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="User Interface\BadgeOverzichtspagina.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="User Interface\Inlogpagina.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -234,6 +242,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\LockIcon.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\20WPM.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

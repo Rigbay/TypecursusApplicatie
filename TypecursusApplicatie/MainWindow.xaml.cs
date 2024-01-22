@@ -78,6 +78,11 @@ namespace TypecursusApplicatie
             LoadAccountControl();
         }
 
+        private void BadgesButton_Click(object sender, RoutedEventArgs e)
+        {
+            LoadBadgeOverzichtspagina();
+        }
+
         private void Logo_Click(object sender, RoutedEventArgs e)
         {
             LoadHomeControl();
@@ -91,6 +96,16 @@ namespace TypecursusApplicatie
         public void LoadModuleDetailpagina(int moduleId)
         {
             MainContent.Content = new ModuleDetailpagina(this, moduleId);
+        }
+
+        public void LoadBadgeOverzichtspagina()
+        {
+            MainContent.Content = new BadgeOverzichtspagina(this);
+        }
+
+        public void LoadStatistiekenpagina()
+        {
+            MainContent.Content = new Statistiekenpagina(this);
         }
 
         private ObservableCollection<Level> _levels;
