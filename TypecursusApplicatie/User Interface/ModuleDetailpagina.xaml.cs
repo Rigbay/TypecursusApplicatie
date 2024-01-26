@@ -51,6 +51,9 @@ namespace TypecursusApplicatie
             // Initialisatie van de timerduur
             _currentModule.TimeLeft = 60;
 
+            lblModuleName.Text = _currentModule.ModuleNaam; // Set the module name
+            lblModuleRequirements.Text = $"Minimum Woorden Per Minuut: {_currentModule.MinWPM}\nMinimum Nauwkeurigheid: {_currentModule.MinNauwkeurigheid}%"; // Set the module requirements
+
             InitializeTypingTest();
         }
 
@@ -58,22 +61,26 @@ namespace TypecursusApplicatie
         private void InitializeTypingTest()
         {
             wordsList = _currentModule.ModuleContent.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-            .Where(word => !string.IsNullOrWhiteSpace(word))
-            .ToList();
-            paragraph = new Paragraph();
+                        .Where(word => !string.IsNullOrWhiteSpace(word))
+                        .ToList();
+            paragraph = new Paragraph
+            {
+                TextAlignment = TextAlignment.Center
+            };
             rtxtTypetestText.Document.Blocks.Clear();
             rtxtTypetestText.Document.Blocks.Add(paragraph);
 
             foreach (string word in wordsList)
             {
-                Run run = new Run(word);
-                paragraph.Inlines.Add(run);
-                paragraph.Inlines.Add(new Run(" "));
+                Run wordRun = new Run(word);
+                paragraph.Inlines.Add(wordRun);
+                paragraph.Inlines.Add(new Run(" ")); // Add space as a separate Run
             }
 
             currentWordIndex = 0;
             HighlightCurrentWord();
         }
+
 
 
 
@@ -84,33 +91,22 @@ namespace TypecursusApplicatie
         private void HighlightCurrentWord()
         {
             int wordIndex = 0;
-            bool highlightNextRun = false;
 
             foreach (Inline inline in paragraph.Inlines)
             {
                 if (inline is Run run)
                 {
-                    // Reset de achtergrondkleur van de Run
-                    run.Background = Brushes.Transparent;
+                    run.Background = wordIndex == currentWordIndex && !string.IsNullOrWhiteSpace(run.Text)
+                                     ? Brushes.LightGray : Brushes.Transparent;
 
-                    if (highlightNextRun)
+                    if (!string.IsNullOrWhiteSpace(run.Text))
                     {
-                        run.Background = Brushes.LightGray; // Highlight de volgende Run (word)
-                        highlightNextRun = false; // Reset de vlag
-                    }
-
-                    // Controleer of de Run het huidige woord is
-                    if (string.IsNullOrWhiteSpace(run.Text) && wordIndex == currentWordIndex)
-                    {
-                        highlightNextRun = true; // Stelt de vlag in om de volgende Run te markeren
-                    }
-                    else if (!string.IsNullOrWhiteSpace(run.Text))
-                    {
-                        wordIndex++; // Verhoogt de index van het woord
+                        wordIndex++;
                     }
                 }
             }
         }
+
 
         // Controleert en markeert het getypte woord
         private void CheckAndHighlightWord()
@@ -152,15 +148,20 @@ namespace TypecursusApplicatie
                 double verticalOffset = rtxtTypetestText.VerticalOffset;
                 double viewportHeight = rtxtTypetestText.ViewportHeight;
 
-                // Check if the run is not visible in the current viewport
-                if (runPosition.Top < verticalOffset || runPosition.Bottom > verticalOffset + viewportHeight)
+                // Check if the run is visible in the current viewport
+                if (runPosition.Bottom > verticalOffset + viewportHeight)
                 {
-                    // Scroll the RichTextBox to bring the run into view
-                    double newVerticalOffset = runPosition.Top - viewportHeight / 40; // Adjust as needed
-                    rtxtTypetestText.ScrollToVerticalOffset(Math.Max(0, newVerticalOffset));
+                    // Scroll down just enough to bring the run into view
+                    rtxtTypetestText.ScrollToVerticalOffset(verticalOffset + runPosition.Bottom - verticalOffset - viewportHeight);
+                }
+                else if (runPosition.Top < verticalOffset)
+                {
+                    // Scroll up just enough to bring the run into view
+                    rtxtTypetestText.ScrollToVerticalOffset(runPosition.Top);
                 }
             }
         }
+
 
 
 
@@ -263,7 +264,7 @@ namespace TypecursusApplicatie
         private double CalculateAccuracy()
         {
             double accuracy = (double)charsTypedCorrectly / totalCharsTyped * 100;
-            lblAccuracy.Text = $"Accuracy: {Math.Round(accuracy, 2)}%";
+            lblAccuracy.Text = $"Nauwkeurigheid: {Math.Round(accuracy, 2)}%";
             return accuracy;
         }
 
@@ -317,7 +318,7 @@ namespace TypecursusApplicatie
                 // Check if badge is already awarded
                 if (!GebruikerDAL.IsBadgeAwardedToUser(userId, badge.BadgeID))
                 {
-                    if (CheckBadgeCriteria(userPerformance, badge.Criteria))
+                    if (CheckBadgeCriteria(userPerformance, badge.Criteria, _currentModule))
                     {
                         GebruikerDAL.AddBadgeToUser(userId, badge.BadgeID);
                         Application.Current.Dispatcher.Invoke(() =>
@@ -330,14 +331,11 @@ namespace TypecursusApplicatie
         }
 
 
-
-
         //Contoleert of de gebruiker de criteria voor de badge heeft behaald
-        private bool CheckBadgeCriteria(UserPerformance performance, string criteria)
+        private bool CheckBadgeCriteria(UserPerformance performance, string criteria, Module currentModule)
         {
             if (performance == null || string.IsNullOrEmpty(criteria))
             {
-                // Handle the null case appropriately, maybe log an error or return false
                 return false;
             }
 
@@ -345,7 +343,7 @@ namespace TypecursusApplicatie
             {
                 if (int.TryParse(criteria.Replace(" WPM", ""), out int targetWPM))
                 {
-                    return performance.WPM >= targetWPM;
+                    return performance.WPM >= targetWPM || (currentModule != null && currentModule.MinWPM >= targetWPM);
                 }
             }
             else if (criteria.StartsWith("Level "))
@@ -360,7 +358,6 @@ namespace TypecursusApplicatie
                 return performance.AllBadgesEarned;
             }
 
-            // If none of the above conditions are met, return false
             return false;
         }
 

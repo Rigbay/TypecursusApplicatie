@@ -100,7 +100,7 @@ namespace TypecursusApplicatie.Models
         public int BadgeID { get; set; }
         public string BadgeNaam { get; set; }
         public string Criteria { get; set; }
-        public string BadgeAfbeelding { get; set; } // Image file name for the badge
+        public byte[] BadgeAfbeelding { get; set; } // BLOB data
         public string BadgeBeschrijving { get; set; } // Description for the badge
         public bool IsUnlocked { get; set; } // Indicates if the badge is unlocked for the user
         public DateTime? BadgeBehaalDatum { get; set; } // Nullable DateTime for badges that haven't been achieved yet

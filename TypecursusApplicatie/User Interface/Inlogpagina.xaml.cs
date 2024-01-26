@@ -64,7 +64,8 @@ namespace TypecursusApplicatie
 
             if (!IsEmailValid(email) || !IsPasswordValid(ingevoerdeWachtwoord))
             {
-                MessageBox.Show("Controleer of het e-mailadres en wachtwoord correct zijn.");
+                var messageBox = new CustomMessageBox("Controleer of het e-mailadres en wachtwoord correct is ingevoerd.");
+                messageBox.ShowDialog();
                 return;
             }
 
@@ -74,12 +75,12 @@ namespace TypecursusApplicatie
             if (gebruiker != null && gebruiker.Wachtwoord == GebruikerDAL.HashWachtwoord(ingevoerdeWachtwoord, gebruiker.Salt))
             {
                 UserSession.Login(gebruiker);
-                MessageBox.Show("Succesvol ingelogd!");
                 mainWindow.LoadHomeControl();
             }
             else
             {
-                MessageBox.Show("Onjuiste inloggegevens.");
+                var messageBox = new CustomMessageBox("Onjuiste inloggegevens.");
+                messageBox.ShowDialog();
             }
         }
 

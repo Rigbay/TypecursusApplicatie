@@ -1,23 +1,17 @@
 ﻿using System;
+using System.Windows.Input;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using TypecursusApplicatie.BusinessLogicLayer;
+using TypecursusApplicatie.Converters;
 using TypecursusApplicatie.Data_Access_Layer;
 using TypecursusApplicatie.Models;
-
+using TypecursusApplicatie.ViewModels;
 
 namespace TypecursusApplicatie
 {
@@ -27,16 +21,17 @@ namespace TypecursusApplicatie
         private GebruikerDAL gebruikerDAL;
 
         public ObservableCollection<Badge> Badges { get; set; }
+        public ObservableCollection<BadgeViewModel> BadgeViewModels { get; set; }
 
         public BadgeOverzichtspagina(MainWindow mainWindow)
         {
             InitializeComponent();
             this.mainWindow = mainWindow;
-            DataContext = this; // Ensure this is set correctly
+            DataContext = this;
             gebruikerDAL = new GebruikerDAL();
 
             LoadBadges();
-            LoadUserInfo(); // Add a method to load user info similar to Statistiekenpagina
+            LoadUserInfo();
         }
 
         private void LoadUserInfo()
@@ -77,32 +72,63 @@ namespace TypecursusApplicatie
             CompletedLevelsCount.Text = earnedBadgesCount.ToString();
         }
 
+        // Method to convert a byte array to a BitmapImage
         private BitmapImage ConvertBlobToImage(byte[] blob)
         {
-            using (var ms = new MemoryStream(blob))
+            try
             {
-                var image = new BitmapImage();
-                image.BeginInit();
-                image.CacheOption = BitmapCacheOption.OnLoad;
-                image.StreamSource = ms;
-                image.EndInit();
-                return image;
+                using (var ms = new MemoryStream(blob))
+                {
+                    var image = new BitmapImage();
+                    image.BeginInit();
+                    image.CacheOption = BitmapCacheOption.OnLoad;
+                    image.StreamSource = ms;
+                    image.EndInit();
+                    image.Freeze();  // Freezing the image for performance improvements
+                    return image;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error converting blob to image: " + ex.Message);
+                return null;
             }
         }
 
+        // Method to load badges and process images
         private void LoadBadges()
         {
             int userId = UserSession.CurrentUserID;
-            var userBadges = gebruikerDAL.GetBadgesForUser(userId);
-            Badges = new ObservableCollection<Badge>(userBadges);
-            BadgesList.ItemsSource = Badges;
+            var allBadges = gebruikerDAL.GetAllBadges();
+            var earnedBadgeIds = gebruikerDAL.GetBadgesByUserId(userId).Select(b => b.BadgeID).ToList();
 
-            foreach (var badge in Badges)
+            BadgeViewModels = new ObservableCollection<BadgeViewModel>(
+                allBadges.Select(badge => new BadgeViewModel(badge)
+                {
+                    ImageSource = earnedBadgeIds.Contains(badge.BadgeID)
+                        ? ConvertBlobToImage(badge.BadgeAfbeelding) // Directly use the BLOB data
+                        : ConvertBlobToGrayscaleImage(badge.BadgeAfbeelding) // Directly use the BLOB data
+                }));
+
+            BadgesList.ItemsSource = BadgeViewModels;
+        }
+
+
+        // Method to apply grayscale effect
+        private BitmapImage ConvertBlobToGrayscaleImage(byte[] blob)
+        {
+            var colorImage = ConvertBlobToImage(blob);
+            if (colorImage != null)
             {
-                badge.ImageSource = ConvertStringToImage(badge.BadgeAfbeelding); // Assuming badge.BadgeAfbeelding is a Base64 string
+                return GrayscaleConverter.ConvertImageToGrayscale(colorImage); // Assuming GrayscaleConverter is implemented correctly
+            }
+            else
+            {
+                return null; // Handle null image case
             }
         }
 
+        // Method to update the badges display
         private void UpdateBadgesDisplay()
         {
             int userId = UserSession.CurrentUserID;
@@ -134,16 +160,24 @@ namespace TypecursusApplicatie
             BadgesList.ItemsSource = Badges;
         }
 
+        
+
+
+        private BitmapImage ConvertStringToGrayscaleImage(byte[] blob)
+        {
+            var image = ConvertBlobToImage(blob);
+            // Apply grayscale effect if needed
+            // Assuming GrayscaleConverter is implemented correctly
+            return GrayscaleConverter.ConvertImageToGrayscale(image);
+        }
+
+
         private bool CheckCriteria(UserPerformance userPerformance, string criteria)
         {
             // Implement the logic to check if the user performance meets the criteria
             return true;
         }
 
-        private byte[] ConvertStringToByteArray(string imageString)
-        {
-            return Convert.FromBase64String(imageString);
-        }
 
         private BitmapImage ConvertStringToImage(string base64String)
         {

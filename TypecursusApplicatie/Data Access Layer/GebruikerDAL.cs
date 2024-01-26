@@ -556,7 +556,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
                                 BadgeID = Convert.ToInt32(reader["BadgeID"]),
                                 BadgeNaam = reader["BadgeNaam"].ToString(),
                                 Criteria = reader["Criteria"].ToString(),
-                                BadgeAfbeelding = reader["BadgeAfbeelding"].ToString(),
+                                BadgeAfbeelding = (byte[])reader["BadgeAfbeelding"],
                                 BadgeBeschrijving = reader["BadgeBeschrijving"].ToString()
                             });
                         }
@@ -592,7 +592,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
                                 BadgeID = Convert.ToInt32(reader["BadgeID"]),
                                 BadgeNaam = reader["BadgeNaam"].ToString(),
                                 Criteria = reader["Criteria"].ToString(),
-                                BadgeAfbeelding = reader["BadgeAfbeelding"].ToString(),
+                                BadgeAfbeelding = (byte[])reader["BadgeAfbeelding"],
                                 BadgeBeschrijving = reader["BadgeBeschrijving"].ToString(),
                                 IsUnlocked = true, // Since it's coming from GebruikersBadges, it's unlocked
                                 BadgeBehaalDatum = reader.IsDBNull(reader.GetOrdinal("BadgeBehaalDatum")) ? (DateTime?)null : reader.GetDateTime(reader.GetOrdinal("BadgeBehaalDatum"))
@@ -648,7 +648,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
                                 BadgeID = Convert.ToInt32(reader["BadgeID"]),
                                 BadgeNaam = reader["BadgeNaam"].ToString(),
                                 Criteria = reader["Criteria"].ToString(),
-                                BadgeAfbeelding = reader["BadgeAfbeelding"].ToString(),
+                                BadgeAfbeelding = (byte[])reader["BadgeAfbeelding"],
                                 BadgeBeschrijving = reader["BadgeBeschrijving"].ToString(),
                                 IsUnlocked = false // Default to false
                             });

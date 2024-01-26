@@ -48,7 +48,7 @@
             <DockPanel HorizontalAlignment="Stretch">
                 <ToggleButton x:Name="SidebarToggle" Content="☰" Width="60" Height="60" DockPanel.Dock="Left" Click="SidebarToggle_Click"/>
                 <Border DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource LogoHoverStyle}" MouseDown="Logo_Click">
-                    <Image Source="/Images/Logo1.png" Width="60" Height="60"/>
+                    <Image Source="/Images/Logo2.png" Width="60" Height="60"/>
                 </Border>
             </DockPanel>
         </Border>
@@ -97,12 +97,13 @@
         
         <StackPanel 
             VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock Text="Homepagina" FontSize="36" FontWeight="Bold" Margin="0,-40,0,120" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Height="500" Width="1200">
-                <TextBlock TextWrapping="Wrap" TextAlignment="Center" FontSize="20"
-                           Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ultricies varius aliquet. Proin id ex dictum, vulputate justo ac, feugiat ligula. Cras laoreet consectetur libero id luctus. Morbi eget porttitor libero. Vestibulum lobortis gravida porta. Duis et sollicitudin libero, et mattis magna. Mauris at erat interdum, blandit lacus nec, eleifend arcu. Curabitur sit amet diam dapibus dolor venenatis pharetra. Suspendisse congue dui non odio semper pulvinar. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In lectus mi, cursus nec sapien nec, tempus malesuada dui.Aliquam mollis elit eget ipsum mollis, sit amet vestibulum neque eleifend. Nunc id magna nec sapien pretium tempus eu ac odio. Nam nec neque sed urna eleifend imperdiet nec a nibh. Nulla vestibulum tellus ligula, a sollicitudin massa commodo id. In id ligula sit amet dui euismod auctor id id purus. Etiam ornare augue urna. Aliquam non velit eu erat semper elementum. Maecenas ut dolor ornare, molestie nulla vitae, ultricies tortor. Sed ultricies bibendum porta. Nam non libero vel est molestie accumsan non a nibh. Quisque non urna est. Vivamus porttitor massa neque, eu vehicula dui ullamcorper vel. Quisque vel dui odio. Sed convallis sagittis sapien et varius. Maecenas cursus diam ac nisl sollicitudin, vel dapibus risus vestibulum. Integer nec vehicula velit. Morbi id facilisis turpis. Donec lacinia ex ut dolor blandit, a varius dui volutpat. Donec commodo justo nec nunc consectetur, vitae maximus ante consectetur. Duis commodo mauris volutpat elit condimentum cursus. Nam ac sapien ligula. Donec quis nulla porta, feugiat nisi ut, tristique nibh." />
-                </ScrollViewer>
-            <Button Content="Levels" Height="30" Width="200" Click="LevelsPagina_Click"/>
+            <TextBlock Text="Homepagina" FontSize="36" FontWeight="Bold" Margin="0,-80,0,120" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Height="500" Width="auto" Padding="100">
+                <TextBlock TextWrapping="Wrap" TextAlignment="Center" FontSize="20" 
+    Text="Welkom bij de Revolutionaire Typecursus!&#x0a;&#x0a;Ontdek de kunst van snel en nauwkeurig typen met onze geavanceerde C# Typecursus. Of je nu beginner bent of je vaardigheden wilt verbeteren, onze cursus biedt een op maat gemaakte ervaring die past bij jouw leerdoelen.&#x0a;&#x0a;Wat Bieden Wij?&#x0a;&#x0a;Gebruiksvriendelijke Interface: Onze cursus is ontworpen met een heldere en intuïtieve interface, waardoor leren leuk en eenvoudig wordt.&#x0a;Gepersonaliseerde Voortgang: Met een eigen account houd je eenvoudig je voortgang en verbeteringen bij. Zie je snelheid en nauwkeurigheid in real-time verbeteren!&#x0a;Diverse Leermodules: Van basisoefeningen tot uitdagende teksten, onze modules zijn ontworpen om je typvaardigheid stap voor stap te verhogen.&#x0a;Real-Time Feedback: Ontvang directe feedback over je prestaties met onze realtime WPM (Words Per Minute) en nauwkeurigheidsstatistieken.&#x0a;Prestatiebadges: Verdien badges als je belangrijke mijlpalen bereikt en blijf gemotiveerd gedurende je leerproces.&#x0a;Statistieken en Voortgang: Volg je verbeteringen via gedetailleerde statistieken en grafieken op je persoonlijke dashboard.&#x0a;&#x0a;Waarom Onze Typecursus?&#x0a;&#x0a;Gebaseerd op geavanceerde C#-technologie en ondersteund door grondig onderzoek en feedback, biedt onze cursus een unieke leerervaring. Je leert niet alleen snel typen, maar ontwikkelt ook een diepere begrip van effectieve typegewoonten.&#x0a;&#x0a;Begin Vandaag Nog!&#x0a;&#x0a;Start je reis naar sneller en nauwkeuriger typen vandaag nog. Registreer je voor onze typecursus en ontgrendel je volledige potentieel. Klaar om je typvaardigheden naar een hoger niveau te tillen? Schrijf je nu in!"/>
+            </ScrollViewer>
+
+            <Button Content="Levels" Height="30" Width="200" Margin="0,80,0,0" Click="LevelsPagina_Click"/>
         </StackPanel>  
         
     </DockPanel>

@@ -54,7 +54,7 @@
             <DockPanel HorizontalAlignment="Stretch">
                 <ToggleButton x:Name="SidebarToggle" Content="☰" Width="60" Height="60" DockPanel.Dock="Left" Click="SidebarToggle_Click"/>
                 <Border DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource LogoHoverStyle}" MouseDown="Logo_Click">
-                    <Image Source="/Images/Logo1.png" Width="60" Height="60"/>
+                    <Image Source="/Images/Logo2.png" Width="60" Height="60"/>
                 </Border>
             </DockPanel>
         </Border>
@@ -122,24 +122,34 @@ SelectionChanged="ComboBox_SelectionChanged">
 
             <!-- Badges Raster Section -->
             <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" Padding="10" Margin="10">
-                <Grid>
-                    <ItemsControl x:Name="BadgesList" ItemsSource="{Binding Badges}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Margin="10">
-                                    <Image Source="{Binding BadgeImageSource}" Width="100" Height="100"
-       ToolTip="{Binding BadgeBeschrijving}"/>
+                <Grid VerticalAlignment="Center">
+                    <!-- Grid for vertical centering -->
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <!-- Add a ScrollViewer for better scrolling -->
+                        <ItemsControl x:Name="BadgesList" ItemsSource="{Binding BadgeViewModels}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" />
+                                    <!-- Center align badges -->
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="10" BorderBrush="Gray" BorderThickness="2" CornerRadius="50"
+                ToolTip="{Binding TooltipText}">
+                                        <Grid>
+                                            <Ellipse Width="100" Height="100" ClipToBounds="True">
+                                                <Ellipse.Fill>
+                                                    <ImageBrush ImageSource="{Binding ImageSource}" Stretch="UniformToFill"/>
+                                                </Ellipse.Fill>
+                                            </Ellipse>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
 
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-
+                        </ItemsControl>
+                    </ScrollViewer>
                 </Grid>
             </Border>
         </Grid>

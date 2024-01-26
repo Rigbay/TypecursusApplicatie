@@ -1,14 +1,18 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!-- Define Color resources -->
-    <Color x:Key="BaseColor">#3A86B7</Color>
-    <Color x:Key="LightColor">#78cce2</Color>
-    <Color x:Key="DarkColor">#002439</Color>
+    <Color x:Key="BaseColor">#686767</Color>
+    <Color x:Key="LightColor">#ffffff</Color>
+    <Color x:Key="DarkColor">#CBD3E1</Color>
+    <Color x:Key="AccentColor">#8AAAE5</Color>
+    <Color x:Key="TextColor">#2C3E50</Color>
 
     <!-- Define SolidColorBrush resources using the Color resources -->
     <SolidColorBrush x:Key="BaseColorBrush" Color="{StaticResource BaseColor}"/>
     <SolidColorBrush x:Key="LightColorBrush" Color="{StaticResource LightColor}"/>
     <SolidColorBrush x:Key="DarkColorBrush" Color="{StaticResource DarkColor}"/>
+    <SolidColorBrush x:Key="AccentColorBrush" Color="{StaticResource AccentColor}"/>
+    <SolidColorBrush x:Key="TextColorBrush" Color="{StaticResource TextColor}"/>
 
     <!-- Style for TextBlock (Heading) -->
     <Style x:Key="HeadingStyle" TargetType="TextBlock">
@@ -16,7 +20,15 @@
         <Setter Property="FontSize" Value="26"/>
         <Setter Property="FontWeight" Value="Bold"/>
     </Style>
-     
+
+    <!-- Style for TextBlock -->
+    <Style x:Key="TextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Montserrat"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+    </Style>
+
+
     <!-- Style for Label -->
     <Style x:Key="LabelStyle" TargetType="Label">
         <Setter Property="FontFamily" Value="Montserrat"/>
@@ -65,12 +77,49 @@
         </Style.Triggers>
     </Style>
 
-    <!-- Neumorphism Style for TextBoxes -->
-    <Style TargetType="TextBox">
+    <!-- Style for NeumorphicMessageButtonStyle -->
+    <Style x:Key="NeumorphicButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
         <Setter Property="Background" Value="{StaticResource BaseColorBrush}"/>
         <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="10"/>
+        <Setter Property="Margin" Value="10"/>
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <ScaleTransform ScaleX="1" ScaleY="1"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="2" Direction="315" Color="{StaticResource DarkColor}" Opacity="0.5" BlurRadius="10"/>
+                        </Border.Effect>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="Button.Click">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="0.95" Duration="0:0:0.1" AutoReverse="True"/>
+                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="0.95" Duration="0:0:0.1" AutoReverse="True"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Neumorphism Style for TextBoxes -->
+    <Style TargetType="TextBox">
+        <Setter Property="Background" Value="{StaticResource LightColorBrush}"/>
+        <Setter Property="Foreground" Value="Black"/>
         <Setter Property="BorderBrush" Value="{StaticResource BaseColorBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Opacity" Value="0.5"/>
         <Setter Property="Padding" Value="5"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -88,11 +137,12 @@
 
     <!-- Neumorphism Style for PasswordBox-->
     <Style TargetType="PasswordBox">
-        <Setter Property="Background" Value="{StaticResource BaseColorBrush}"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="{StaticResource LightColorBrush}"/>
+        <Setter Property="Foreground" Value="Black"/>
         <Setter Property="BorderBrush" Value="{StaticResource BaseColorBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Padding" Value="5"/>
+        <Setter Property="Opacity" Value="0.5"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="PasswordBox">
@@ -121,7 +171,7 @@
     <!-- Neumorphism Style for ComboBoxes -->
     <Style x:Key="NeumorphicDropdown" TargetType="ComboBox">
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Background" Value="{StaticResource BaseColorBrush}"/>
+        <Setter Property="Background" Value="{StaticResource LightColorBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource BaseColorBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Padding" Value="5"/>
@@ -184,4 +234,5 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    
 </ResourceDictionary>

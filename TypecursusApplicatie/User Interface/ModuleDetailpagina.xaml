@@ -48,7 +48,7 @@
             <DockPanel HorizontalAlignment="Stretch">
                 <ToggleButton x:Name="SidebarToggle" Content="☰" Width="60" Height="60" DockPanel.Dock="Left" Click="SidebarToggle_Click"/>
                 <Border DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource LogoHoverStyle}" MouseDown="Logo_Click">
-                    <Image Source="/Images/Logo1.png" Width="60" Height="60"/>
+                    <Image Source="/Images/Logo2.png" Width="60" Height="60"/>
                 </Border>
             </DockPanel>
         </Border>
@@ -101,33 +101,27 @@
                 <!-- Extra ruimte onder -->
             </Grid.RowDefinitions>
 
-            <!-- Module Name and Requirements -->
-            <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top">
-                <TextBlock x:Name="lblModuleName" FontSize="24" FontWeight="Bold" Margin="10" HorizontalAlignment="Center"/>
-                <TextBlock x:Name="lblModuleRequirements" FontSize="16" Margin="10" HorizontalAlignment="Center"/>
+            <StackPanel Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,75,0,0">
+                <TextBlock x:Name="lblModuleName" FontSize="24" FontWeight="Bold" Margin="10" HorizontalAlignment="Center" TextAlignment="Center"/>
+                <TextBlock x:Name="lblModuleRequirements" FontSize="16" Margin="10" HorizontalAlignment="Center" TextAlignment="Center"/>
             </StackPanel>
 
             <!-- Typing Test Content -->
-            <ScrollViewer Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top"
-              Height="150" Width="1250"
-              VerticalScrollBarVisibility="Disabled" 
-              HorizontalScrollBarVisibility="Disabled">
-                <RichTextBox x:Name="rtxtTypetestText" IsReadOnly="True" Margin="10"
-                 Height="100" FontSize="30" Padding="5" PreviewMouseWheel="RtxtTypetestText_PreviewMouseWheel">
-                    <!-- Content is dynamically loaded from the database -->
-                </RichTextBox>
-            </ScrollViewer>
-
+            <RichTextBox Grid.Row="1" x:Name="rtxtTypetestText" IsReadOnly="True" Margin="10"
+             Height="Auto" Width="1250" FontSize="30" Padding="15"
+             HorizontalAlignment="Center" VerticalAlignment="Top">
+                <!-- Content is dynamically loaded from the database -->
+            </RichTextBox>
 
             <!-- WPM, Accuracy, Timer -->
             <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
                 <TextBlock x:Name="lblWPM" FontSize="16" Margin="10" Text="WPM: 0"/>
-                <TextBlock x:Name="lblAccuracy" FontSize="16" Margin="10" Text="Accuracy: 0%"/>
+                <TextBlock x:Name="lblAccuracy" FontSize="16" Margin="10" Text="Nauwkeurigheid: 0%"/>
                 <TextBlock x:Name="lblTimer" FontSize="16" Margin="10" Text="Tijd: 60"/>
             </StackPanel>
 
             <!-- Typing Area -->
-            <TextBox x:Name="txtTypingArea" Grid.Row="4" Height="40" Width="700" Margin="10" HorizontalAlignment="Center" TextChanged="TxtTypingArea_TextChanged" PreviewKeyDown="TxtTypingArea_PreviewKeyDown"/>
+            <TextBox x:Name="txtTypingArea" Grid.Row="4" Height="40" FontSize="25" Width="700" Margin="10" HorizontalAlignment="Center" TextChanged="TxtTypingArea_TextChanged" PreviewKeyDown="TxtTypingArea_PreviewKeyDown"/>
 
             <!-- Buttons -->
             <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Center">

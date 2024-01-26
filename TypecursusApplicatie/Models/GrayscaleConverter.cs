@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -28,6 +29,34 @@ namespace TypecursusApplicatie.Converters
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
+        }
+
+        public static BitmapImage ConvertImageToGrayscale(BitmapImage colorImage)
+        {
+            var grayscaleEffect = new FormatConvertedBitmap();
+            grayscaleEffect.BeginInit();
+            grayscaleEffect.Source = colorImage;
+            grayscaleEffect.DestinationFormat = PixelFormats.Gray8; // Gray8 for grayscale
+            grayscaleEffect.EndInit();
+
+            return ConvertFormatConvertedBitmapToBitmapImage(grayscaleEffect);
+        }
+
+        private static BitmapImage ConvertFormatConvertedBitmapToBitmapImage(FormatConvertedBitmap formatConvertedBitmap)
+        {
+            BitmapImage bitmapImage = new BitmapImage();
+            JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+            MemoryStream memoryStream = new MemoryStream();
+
+            encoder.Frames.Add(BitmapFrame.Create(formatConvertedBitmap));
+            encoder.Save(memoryStream);
+
+            memoryStream.Position = 0;
+            bitmapImage.BeginInit();
+            bitmapImage.StreamSource = memoryStream;
+            bitmapImage.EndInit();
+
+            return bitmapImage;
         }
     }
 }
