@@ -10,6 +10,7 @@ namespace TypecursusApplicatie
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        // Hier wordt de MainWindow class gedefinieerd.
         public MainWindow()
         {
             InitializeComponent();
@@ -19,6 +20,7 @@ namespace TypecursusApplicatie
             LoadLoginControl();
         }
 
+        // Hier defineer ik alle methodes die ik nodig heb om de applicatie te laten werken. Deze staan hier omdat ze in de MainWindow class moeten staan zodat ze overal in de applicatie gebruikt kunnen worden.
         public event PropertyChangedEventHandler PropertyChanged;
 
         public bool IsUserLoggedIn => UserSession.IsLoggedIn();
@@ -139,7 +141,6 @@ namespace TypecursusApplicatie
                 previousLevelCompleted = level.ProgressPercentage == 100;
             }
 
-            // Notify pages that levels are loaded
             OnPropertyChanged(nameof(Levels));
         }
 
@@ -150,7 +151,7 @@ namespace TypecursusApplicatie
             if (selectedLevel != null && selectedLevel.IsUnlocked)
             {
                 LoadModuleOverzichtspagina(selectedLevel.LevelID);
-                comboBox.SelectedIndex = -1; // Reset selection after navigation
+                comboBox.SelectedIndex = -1; 
             }
         }
 

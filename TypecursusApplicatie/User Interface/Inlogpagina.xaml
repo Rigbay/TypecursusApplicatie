@@ -6,6 +6,7 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 
+    <!-- De usercontrols voor de inlogpagina-->
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -15,6 +16,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
+    <!-- Topbar en zijbalk -->
     <DockPanel Background="#949494">
         <Border DockPanel.Dock="Top" Background="Gray" Height="60">
             <DockPanel HorizontalAlignment="Stretch">
@@ -65,6 +67,7 @@
             </StackPanel>
         </DockPanel>
 
+        <!-- Inlog velden -->
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock Text="Inloggen" FontSize="50" FontWeight="Bold" Margin="0,0,0,50" HorizontalAlignment="Center" />
             <StackPanel Width="600">

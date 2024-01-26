@@ -23,11 +23,13 @@ namespace TypecursusApplicatie
             this.DataContext = this;
         }
 
+        // Methode die de modules laadt voor het level dat is meegegeven
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             LoadModulesForLevel(currentLevelId);
         }
 
+        // Methode die de modules laadt
         private void LoadModulesForLevel(int levelId)
         {
             GebruikerDAL gebruikerDAL = new GebruikerDAL();
@@ -41,6 +43,7 @@ namespace TypecursusApplicatie
             }
         }
 
+        // Methode voor de knop die de module start
         private void StartModuleButton_Click(object sender, RoutedEventArgs e)
         {
             Button btn = sender as Button;
@@ -48,7 +51,7 @@ namespace TypecursusApplicatie
             mainWindow.LoadModuleDetailpagina(selectedModule.ModuleID);
         }
 
-        // Remaining methods (Login, Logout, Register, etc.)
+        // De event handlers voor de sidebar en logo
         private void Homepagina_Loaded(object sender, RoutedEventArgs e)
         {
             if (this.DataContext is MainWindow main)
@@ -98,7 +101,7 @@ namespace TypecursusApplicatie
             }
             else
             {
-                comboBox.SelectedIndex = -1; // Reset selection
+                comboBox.SelectedIndex = -1; 
             }
         }
     }

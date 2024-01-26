@@ -9,6 +9,7 @@
              xmlns:local="clr-namespace:TypecursusApplicatie"
              Loaded="UserControl_Loaded">
 
+    <!-- De usercontrols voor de ModuleOverzichtspagina-->
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
         <local:BooleanToInverseVisibilityConverter x:Key="BoolToInverseVisConverter"/>
@@ -45,6 +46,7 @@
         </Style>
     </UserControl.Resources>
 
+    <!-- Topbar en zijbalk -->
     <DockPanel>
         <Border DockPanel.Dock="Top" Background="Gray" Height="60">
             <DockPanel HorizontalAlignment="Stretch">
@@ -110,6 +112,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+            
+            <!-- De Module Overzichtspagina -->
 
             <TextBlock Grid.Row="0" Text="Module-overzichtspagina" FontSize="30" FontWeight="Bold" Margin="20,10,20,10" HorizontalAlignment="Center"/>
 

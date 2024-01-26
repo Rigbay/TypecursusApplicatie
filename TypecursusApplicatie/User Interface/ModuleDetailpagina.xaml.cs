@@ -51,8 +51,8 @@ namespace TypecursusApplicatie
             // Initialisatie van de timerduur
             _currentModule.TimeLeft = 60;
 
-            lblModuleName.Text = _currentModule.ModuleNaam; // Set the module name
-            lblModuleRequirements.Text = $"Minimum Woorden Per Minuut: {_currentModule.MinWPM}\nMinimum Nauwkeurigheid: {_currentModule.MinNauwkeurigheid}%"; // Set the module requirements
+            lblModuleName.Text = _currentModule.ModuleNaam; // Stelt de naam van de module in
+            lblModuleRequirements.Text = $"Minimum Woorden Per Minuut: {_currentModule.MinWPM}\nMinimum Nauwkeurigheid: {_currentModule.MinNauwkeurigheid}%"; // Zet de minimum vereisten voor de module
 
             InitializeTypingTest();
         }
@@ -74,7 +74,7 @@ namespace TypecursusApplicatie
             {
                 Run wordRun = new Run(word);
                 paragraph.Inlines.Add(wordRun);
-                paragraph.Inlines.Add(new Run(" ")); // Add space as a separate Run
+                paragraph.Inlines.Add(new Run(" ")); 
             }
 
             currentWordIndex = 0;
@@ -148,15 +148,12 @@ namespace TypecursusApplicatie
                 double verticalOffset = rtxtTypetestText.VerticalOffset;
                 double viewportHeight = rtxtTypetestText.ViewportHeight;
 
-                // Check if the run is visible in the current viewport
                 if (runPosition.Bottom > verticalOffset + viewportHeight)
                 {
-                    // Scroll down just enough to bring the run into view
                     rtxtTypetestText.ScrollToVerticalOffset(verticalOffset + runPosition.Bottom - verticalOffset - viewportHeight);
                 }
                 else if (runPosition.Top < verticalOffset)
                 {
-                    // Scroll up just enough to bring the run into view
                     rtxtTypetestText.ScrollToVerticalOffset(runPosition.Top);
                 }
             }
@@ -168,7 +165,7 @@ namespace TypecursusApplicatie
 
 
 
-        // Helper method to check if the Run's position is within the visible area of RichTextBox
+        // Helper methode om te controleren of een Run zichtbaar is in de RichTextBox
         private bool IsRunVisible(Rect runPosition)
         {
             var visibleRange = new Rect(0, rtxtTypetestText.VerticalOffset,
@@ -209,7 +206,7 @@ namespace TypecursusApplicatie
 
         private void RtxtTypetestText_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            e.Handled = true; // This will disable scrolling in RichTextBox
+            e.Handled = true; 
         }
 
         // Geeft het huidige woord terug dat getypt moet worden
@@ -311,11 +308,11 @@ namespace TypecursusApplicatie
         {
             int userId = UserSession.CurrentUserID;
             UserPerformance userPerformance = GebruikerDAL.GetLatestPerformanceForUser(userId);
-            var allAvailableBadges = GebruikerDAL.GetAllBadges(); // Fetches all badges
+            var allAvailableBadges = GebruikerDAL.GetAllBadges(); 
 
             foreach (var badge in allAvailableBadges)
             {
-                // Check if badge is already awarded
+                // Checkt of de gebruiker de badge al heeft behaald
                 if (!GebruikerDAL.IsBadgeAwardedToUser(userId, badge.BadgeID))
                 {
                     if (CheckBadgeCriteria(userPerformance, badge.Criteria, _currentModule))
@@ -378,8 +375,6 @@ namespace TypecursusApplicatie
             lblTimer.Text = "Tijd: 60";
             lblWPM.Text = "WPM: 0";
             lblAccuracy.Text = "Accuracy: 0%";
-
-            // Reset scroll position to the top of the RichTextBox
             rtxtTypetestText.CaretPosition = rtxtTypetestText.Document.ContentStart;
             rtxtTypetestText.ScrollToHome();
         }
@@ -522,6 +517,7 @@ namespace TypecursusApplicatie
             mainWindow.LoadHomeControl();
         }
 
+        // Event handler voor de level selectie combobox
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var comboBox = sender as ComboBox;
@@ -532,7 +528,7 @@ namespace TypecursusApplicatie
             }
             else
             {
-                // Reset the selection if the level is locked
+
                 comboBox.SelectedIndex = -1;
             }
         }

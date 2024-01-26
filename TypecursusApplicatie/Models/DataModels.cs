@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows.Media;
 
+// Alle data modellen voor de database
 namespace TypecursusApplicatie.Models
 {
     public class Gebruiker
@@ -100,11 +101,11 @@ namespace TypecursusApplicatie.Models
         public int BadgeID { get; set; }
         public string BadgeNaam { get; set; }
         public string Criteria { get; set; }
-        public byte[] BadgeAfbeelding { get; set; } // BLOB data
-        public string BadgeBeschrijving { get; set; } // Description for the badge
-        public bool IsUnlocked { get; set; } // Indicates if the badge is unlocked for the user
-        public DateTime? BadgeBehaalDatum { get; set; } // Nullable DateTime for badges that haven't been achieved yet
-        public ImageSource ImageSource { get; set; } // ImageSource for the badge
+        public byte[] BadgeAfbeelding { get; set; }
+        public string BadgeBeschrijving { get; set; } 
+        public bool IsUnlocked { get; set; } 
+        public DateTime? BadgeBehaalDatum { get; set; }
+        public ImageSource ImageSource { get; set; } 
     }
 
 

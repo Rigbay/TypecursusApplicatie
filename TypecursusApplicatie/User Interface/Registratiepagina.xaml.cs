@@ -46,6 +46,7 @@ namespace TypecursusApplicatie
             mainWindow.LogoutUser();
         }
 
+        // Methode die ervoor zorgt dat wanneer je op de registratie knop klikt, je wordt geregistreerd als gebruiker. Als je niet alle velden hebt ingevuld of je e-mailadres of wachtwoord niet voldoen aan de eisen, krijg je een foutmelding.
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
             string voornaam = txtVoornaam.Text;

@@ -27,6 +27,7 @@ namespace TypecursusApplicatie
             this.DataContext = this;
         }
 
+        // Methode die controleert of de gebruiker is ingelogd. Als de gebruiker is ingelogd worden de levels geladen, anders krijgt de gebruiker een melding dat hij/zij moet inloggen.
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (UserSession.IsLoggedIn())
@@ -40,6 +41,7 @@ namespace TypecursusApplicatie
             }
         }
 
+        // Methode die de levels laadt.
         private void LoadLevels()
         {
             GebruikerDAL gebruikerDAL = new GebruikerDAL();
@@ -61,12 +63,13 @@ namespace TypecursusApplicatie
             }
         }
 
-
+        // Methode die de progressie van de gebruiker weergeeft.
         private string GenerateProgressDisplay(int progress)
         {
             return $"{progress}% completed";
         }
 
+        // Methode voor de knoppen van de levels. Als je op een level klikt wordt je doorgestuurd naar de module overzichtspagina van dat level.
         private void LevelTile_Click(object sender, RoutedEventArgs e)
         {
             Button clickedButton = sender as Button;

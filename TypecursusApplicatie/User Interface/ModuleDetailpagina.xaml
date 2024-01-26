@@ -42,8 +42,8 @@
         </Style>
     </UserControl.Resources>
 
+    <!-- Topbar en zijbalk -->
     <DockPanel>
-        <!-- Header -->
         <Border DockPanel.Dock="Top" Background="Gray" Height="60">
             <DockPanel HorizontalAlignment="Stretch">
                 <ToggleButton x:Name="SidebarToggle" Content="☰" Width="60" Height="60" DockPanel.Dock="Left" Click="SidebarToggle_Click"/>
@@ -53,7 +53,6 @@
             </DockPanel>
         </Border>
 
-        <!-- Sidebar -->
         <DockPanel x:Name="Sidebar" DockPanel.Dock="Left" Background="Gray" Width="0">
             <StackPanel DockPanel.Dock="Top">
                 <Button Content="Home" Style="{StaticResource SidebarButtonStyle}" Click="HomeButton_Click" Width="100" HorizontalAlignment="Center"/>
@@ -86,44 +85,34 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*"/>
-                <!-- Extra ruimte boven -->
                 <RowDefinition Height="Auto"/>
-                <!-- Module Name and Requirements -->
                 <RowDefinition Height="*"/>
-                <!-- Typing Test Content - Resizable row -->
                 <RowDefinition Height="Auto"/>
-                <!-- WPM, Accuracy, Timer -->
                 <RowDefinition Height="Auto"/>
-                <!-- Typing Area -->
                 <RowDefinition Height="Auto"/>
-                <!-- Buttons -->
                 <RowDefinition Height="2*"/>
-                <!-- Extra ruimte onder -->
             </Grid.RowDefinitions>
+            
+            <!-- De mMdule Detailpagina -->
 
             <StackPanel Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,75,0,0">
                 <TextBlock x:Name="lblModuleName" FontSize="24" FontWeight="Bold" Margin="10" HorizontalAlignment="Center" TextAlignment="Center"/>
                 <TextBlock x:Name="lblModuleRequirements" FontSize="16" Margin="10" HorizontalAlignment="Center" TextAlignment="Center"/>
             </StackPanel>
 
-            <!-- Typing Test Content -->
             <RichTextBox Grid.Row="1" x:Name="rtxtTypetestText" IsReadOnly="True" Margin="10"
              Height="Auto" Width="1250" FontSize="30" Padding="15"
              HorizontalAlignment="Center" VerticalAlignment="Top">
-                <!-- Content is dynamically loaded from the database -->
             </RichTextBox>
 
-            <!-- WPM, Accuracy, Timer -->
             <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
                 <TextBlock x:Name="lblWPM" FontSize="16" Margin="10" Text="WPM: 0"/>
                 <TextBlock x:Name="lblAccuracy" FontSize="16" Margin="10" Text="Nauwkeurigheid: 0%"/>
                 <TextBlock x:Name="lblTimer" FontSize="16" Margin="10" Text="Tijd: 60"/>
             </StackPanel>
 
-            <!-- Typing Area -->
             <TextBox x:Name="txtTypingArea" Grid.Row="4" Height="40" FontSize="25" Width="700" Margin="10" HorizontalAlignment="Center" TextChanged="TxtTypingArea_TextChanged" PreviewKeyDown="TxtTypingArea_PreviewKeyDown"/>
 
-            <!-- Buttons -->
             <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button x:Name="btnReset" Content="Reset" Width="100" Margin="5" Click="BtnReset_Click"/>
                 <Button x:Name="btnBack" Content="Terug" Width="100" Margin="5" Click="BtnBack_Click"/>

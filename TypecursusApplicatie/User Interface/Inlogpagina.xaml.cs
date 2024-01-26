@@ -22,18 +22,22 @@ namespace TypecursusApplicatie
             txtEmail.KeyDown += TxtEmail_KeyDown;
             txtPassword.KeyDown += TxtPassword_KeyDown;
         }
+
+        // Methode die ervoor zorgt dat je kan inloggen met de enter toets
         private void TxtEmail_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
                 LoginButton_Click(this, new RoutedEventArgs());
         }
 
+        // Methode die ervoor zorgt dat je kan inloggen met de enter toets
         private void TxtPassword_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
                 LoginButton_Click(this, new RoutedEventArgs());
         }
 
+        // Methode die ervoor zorgt dat je kan inloggen met de enter toets
         private void UserControl_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -57,6 +61,8 @@ namespace TypecursusApplicatie
             }
         }
 
+        // Wanneer je op de login knop klikt wordt er gecontroleerd of het e-mailadres en wachtwoord correct is ingevoerd. Als dit niet het geval is krijg je een melding te zien. Als dit wel het geval is wordt er gecontroleerd of het e-mailadres en wachtwoord overeenkomen met de gegevens in de database.
+        // Als dit niet het geval is krijg je een melding te zien. Als dit wel het geval is wordt je ingelogd en wordt je doorgestuurd naar de homepagina.
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             string email = txtEmail.Text;

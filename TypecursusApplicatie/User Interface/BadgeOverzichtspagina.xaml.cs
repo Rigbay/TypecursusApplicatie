@@ -34,45 +34,40 @@ namespace TypecursusApplicatie
             LoadUserInfo();
         }
 
+        // Methode om gebruikersinformatie te laden
         private void LoadUserInfo()
         {
             if (!UserSession.IsLoggedIn())
             {
-                // Handle the case when the user is not logged in
                 return;
             }
-
+            // Haalt de gebruiker op uit de database
             int userId = UserSession.CurrentUserID;
             var gebruiker = gebruikerDAL.GetGebruikerById(userId);
             if (gebruiker == null)
             {
-                // Handle user not found scenario
                 return;
             }
 
-            // Populate user details in UI
             VoornaamTextBlock.Text = gebruiker.Voornaam;
             AchternaamTextBlock.Text = gebruiker.Achternaam;
             EmailadresTextBlock.Text = gebruiker.Emailadres;
 
-            // Load completed modules count
+            // Haalt de voltooide modules en verdiende badges op
             var completedModules = gebruikerDAL.GetCompletedModulesByUserId(userId);
             CompletedModulesCount.Text = completedModules.ToString();
 
-            // Load earned badges count
             var earnedBadges = gebruikerDAL.GetEarnedBadgesCountByUserId(userId);
             CompletedLevelsCount.Text = earnedBadges.ToString();
 
-            // Load module completion data
             int completedModulesCount = gebruikerDAL.GetCompletedModulesByUserId(userId);
             CompletedModulesCount.Text = completedModulesCount.ToString();
 
-            // Load badge data
             int earnedBadgesCount = gebruikerDAL.GetEarnedBadgesCountByUserId(userId);
             CompletedLevelsCount.Text = earnedBadgesCount.ToString();
         }
 
-        // Method to convert a byte array to a BitmapImage
+        // Methode om een BLOB om te zetten naar een BitmapImage
         private BitmapImage ConvertBlobToImage(byte[] blob)
         {
             try
@@ -84,7 +79,7 @@ namespace TypecursusApplicatie
                     image.CacheOption = BitmapCacheOption.OnLoad;
                     image.StreamSource = ms;
                     image.EndInit();
-                    image.Freeze();  // Freezing the image for performance improvements
+                    image.Freeze();  
                     return image;
                 }
             }
@@ -95,7 +90,7 @@ namespace TypecursusApplicatie
             }
         }
 
-        // Method to load badges and process images
+        // Methode om de badges te laden
         private void LoadBadges()
         {
             int userId = UserSession.CurrentUserID;
@@ -106,33 +101,33 @@ namespace TypecursusApplicatie
                 allBadges.Select(badge => new BadgeViewModel(badge)
                 {
                     ImageSource = earnedBadgeIds.Contains(badge.BadgeID)
-                        ? ConvertBlobToImage(badge.BadgeAfbeelding) // Directly use the BLOB data
-                        : ConvertBlobToGrayscaleImage(badge.BadgeAfbeelding) // Directly use the BLOB data
+                        ? ConvertBlobToImage(badge.BadgeAfbeelding) 
+                        : ConvertBlobToGrayscaleImage(badge.BadgeAfbeelding) 
                 }));
 
             BadgesList.ItemsSource = BadgeViewModels;
         }
 
 
-        // Method to apply grayscale effect
+        // Methode om een BLOB om te zetten naar een BitmapImage in grijstinten
         private BitmapImage ConvertBlobToGrayscaleImage(byte[] blob)
         {
             var colorImage = ConvertBlobToImage(blob);
             if (colorImage != null)
             {
-                return GrayscaleConverter.ConvertImageToGrayscale(colorImage); // Assuming GrayscaleConverter is implemented correctly
+                return GrayscaleConverter.ConvertImageToGrayscale(colorImage);
             }
             else
             {
-                return null; // Handle null image case
+                return null;
             }
         }
 
-        // Method to update the badges display
+        // Methode om de badges te updaten
         private void UpdateBadgesDisplay()
         {
             int userId = UserSession.CurrentUserID;
-            var userPerformance = gebruikerDAL.GetLatestPerformanceForUser(userId); // This is a method to be implemented
+            var userPerformance = gebruikerDAL.GetLatestPerformanceForUser(userId); 
             var allBadges = gebruikerDAL.GetAllBadges();
             var userBadges = gebruikerDAL.GetBadgesForUser(userId);
 
@@ -144,10 +139,10 @@ namespace TypecursusApplicatie
                 }
                 else
                 {
-                    if (CheckCriteria(userPerformance, badge.Criteria)) // CheckCriteria is a method to be implemented
+                    if (CheckCriteria(userPerformance, badge.Criteria)) 
                     {
                         badge.IsUnlocked = true;
-                        gebruikerDAL.AddBadgeToUser(userId, badge.BadgeID); // AddBadgeToUser is a method to be implemented
+                        gebruikerDAL.AddBadgeToUser(userId, badge.BadgeID);
                     }
                     else
                     {
@@ -160,25 +155,20 @@ namespace TypecursusApplicatie
             BadgesList.ItemsSource = Badges;
         }
 
-        
-
-
+        // Methode om een BLOB om te zetten naar een BitmapImage in grijstinten
         private BitmapImage ConvertStringToGrayscaleImage(byte[] blob)
         {
             var image = ConvertBlobToImage(blob);
-            // Apply grayscale effect if needed
-            // Assuming GrayscaleConverter is implemented correctly
             return GrayscaleConverter.ConvertImageToGrayscale(image);
         }
 
-
+        // Methode om de criteria van modules te controleren
         private bool CheckCriteria(UserPerformance userPerformance, string criteria)
         {
-            // Implement the logic to check if the user performance meets the criteria
             return true;
         }
 
-
+        // Methode om een string om te zetten naar een BitmapImage
         private BitmapImage ConvertStringToImage(string base64String)
         {
             try
@@ -196,20 +186,12 @@ namespace TypecursusApplicatie
             }
             catch (FormatException ex)
             {
-                // Log the error for debugging purposes
                 Console.WriteLine("Invalid Base64 string: " + ex.Message);
-
-                // Optionally return a default/fallback image
                 return new BitmapImage(new Uri("/Images/20WPM.png", UriKind.RelativeOrAbsolute));
             }
         }
 
-
-
-
-
-        // The rest of your event handlers and methods should go here
-
+        // Event handlers voor de zijbalk en logo
         private void Homepagina_Loaded(object sender, RoutedEventArgs e)
         {
             if (DataContext is MainWindow main)
@@ -275,7 +257,6 @@ namespace TypecursusApplicatie
             }
             else
             {
-                // Reset the selection if the level is locked
                 comboBox.SelectedIndex = -1;
             }
         }

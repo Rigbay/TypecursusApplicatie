@@ -59,7 +59,7 @@
             </DockPanel>
         </Border>
 
-        <!-- Sidebar -->
+        <!-- Zijbalk -->
         <DockPanel x:Name="Sidebar" DockPanel.Dock="Left" Background="Gray" Width="0">
             <StackPanel DockPanel.Dock="Top">
                 <Button Content="Home" Style="{StaticResource SidebarButtonStyle}" Click="HomeButton_Click" Width="100" HorizontalAlignment="Center"/>
@@ -89,16 +89,14 @@ SelectionChanged="ComboBox_SelectionChanged">
             </StackPanel>
         </DockPanel>
 
-        <!-- Main Content Area -->
+        <!-- Hoofd inhoud -->
         <Grid DockPanel.Dock="Top" Margin="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
-                <!-- User info takes one-third of space -->
                 <ColumnDefinition Width="3*"/>
-                <!-- Graph takes two-thirds of space -->
             </Grid.ColumnDefinitions>
 
-            <!-- User Information Section -->
+            <!-- Gebruikers informatie Sectie -->
             <Border Grid.Column="0" BorderBrush="Black" BorderThickness="1" Padding="10" Margin="10">
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="Naam:" FontSize="16" FontWeight="Bold" Margin="5"/>
@@ -120,23 +118,19 @@ SelectionChanged="ComboBox_SelectionChanged">
                 </StackPanel>
             </Border>
 
-            <!-- Badges Raster Section -->
+            <!-- Badges Raster sectie -->
             <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" Padding="10" Margin="10">
                 <Grid VerticalAlignment="Center">
-                    <!-- Grid for vertical centering -->
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <!-- Add a ScrollViewer for better scrolling -->
                         <ItemsControl x:Name="BadgesList" ItemsSource="{Binding BadgeViewModels}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" />
-                                    <!-- Center align badges -->
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Margin="10" BorderBrush="Gray" BorderThickness="2" CornerRadius="50"
-                ToolTip="{Binding TooltipText}">
+                                    <Border Margin="10" BorderBrush="Gray" BorderThickness="2" CornerRadius="50" ToolTip="{Binding TooltipText}">
                                         <Grid>
                                             <Ellipse Width="100" Height="100" ClipToBounds="True">
                                                 <Ellipse.Fill>
@@ -147,7 +141,6 @@ SelectionChanged="ComboBox_SelectionChanged">
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
-
                         </ItemsControl>
                     </ScrollViewer>
                 </Grid>

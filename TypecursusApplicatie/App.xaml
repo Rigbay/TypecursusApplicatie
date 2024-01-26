@@ -4,6 +4,5 @@
              xmlns:local="clr-namespace:TypecursusApplicatie"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <!-- Applicatie Resources plaats ik hier -->
     </Application.Resources>
 </Application>

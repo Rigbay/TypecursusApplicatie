@@ -9,15 +9,131 @@ using TypecursusApplicatie.BusinessLogicLayer;
 
 namespace TypecursusApplicatie.Data_Access_Layer
 {
+    // De Gebruiker Data Access Layer klasse bevat alle methodes voor database interacties gerelateerd aan gebruikers
     public class GebruikerDAL
     {
+        // Verbindingsstring voor de database
         private string connectionString;
 
+        // Constructor van GebruikerDAL, stelt de verbindingsstring in
         public GebruikerDAL()
         {
             connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Typecursusdatabase"].ConnectionString;
         }
 
+        // Methode om gebruiker op te halen op basis van emailadres
+        public Gebruiker GetGebruikerByEmail(string email)
+        {
+            Gebruiker gebruiker = null;
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM Gebruikers WHERE Emailadres = @Emailadres", conn);
+                cmd.Parameters.AddWithValue("@Emailadres", email);
+
+                try
+                {
+                    conn.Open();
+                    MySqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        gebruiker = new Gebruiker
+                        {
+                            GebruikersID = Convert.ToInt32(reader["GebruikersID"]),
+                            Voornaam = reader["Voornaam"].ToString(),
+                            Achternaam = reader["Achternaam"].ToString(),
+                            Emailadres = reader["Emailadres"].ToString(),
+                            Salt = reader["Salt"].ToString(),
+                            Wachtwoord = reader["Wachtwoord"].ToString()
+                        };
+                    }
+                    reader.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Fout bij het ophalen van de gebruiker: " + ex.Message);
+                }
+            }
+
+            return gebruiker;
+        }
+
+        // Methode om gebruiker op te halen op basis van gebruikersID 
+        public Gebruiker GetGebruikerById(int userId)
+        {
+            Gebruiker gebruiker = null;
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                string query = "SELECT * FROM Gebruikers WHERE GebruikersID = @UserId";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserId", userId);
+
+                try
+                {
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            gebruiker = new Gebruiker
+                            {
+                                GebruikersID = Convert.ToInt32(reader["GebruikersID"]),
+                                Voornaam = reader["Voornaam"].ToString(),
+                                Achternaam = reader["Achternaam"].ToString(),
+                                Emailadres = reader["Emailadres"].ToString(),
+                            };
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error in GetGebruikerById: " + ex.Message);
+                }
+            }
+            return gebruiker;
+        }
+
+        // Methode om gebruiker toe te voegen aan de database
+        public void AddGebruiker(Gebruiker nieuweGebruiker)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                var salt = Guid.NewGuid().ToString();
+                var hashedPassword = HashWachtwoord(nieuweGebruiker.Wachtwoord, salt);
+
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO Gebruikers (Voornaam, Achternaam, Emailadres, Wachtwoord, Salt) VALUES (@Voornaam, @Achternaam, @Emailadres, @Wachtwoord, @Salt)", conn);
+
+                cmd.Parameters.AddWithValue("@Voornaam", nieuweGebruiker.Voornaam);
+                cmd.Parameters.AddWithValue("@Achternaam", nieuweGebruiker.Achternaam);
+                cmd.Parameters.AddWithValue("@Emailadres", nieuweGebruiker.Emailadres);
+                cmd.Parameters.AddWithValue("@Wachtwoord", hashedPassword);
+                cmd.Parameters.AddWithValue("@Salt", salt);
+
+                try
+                {
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Fout bij het registreren van de gebruiker: " + ex.Message);
+                }
+            }
+        }
+
+        // Methode om wachtwoord te hashen
+        public static string HashWachtwoord(string wachtwoord, string salt)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                string saltedPassword = wachtwoord + salt;
+                byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
+                return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+            }
+        }
+
+        // Methode om alle Levels op te halen
         public List<Level> GetAllLevels()
         {
             List<Level> levels = new List<Level>();
@@ -49,6 +165,8 @@ namespace TypecursusApplicatie.Data_Access_Layer
             }
             return levels;
         }
+
+        // Methode om alle modules op te halen
         public List<Module> GetAllModules()
         {
             List<Module> modules = new List<Module>();
@@ -86,7 +204,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
             return modules;
         }
 
-
+        // Methode om modulepoging toe te voegen aan de database
         public void AddModulePoging(ModulePogingen poging)
         {
             using (MySqlConnection conn = new MySqlConnection(connectionString))
@@ -112,7 +230,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
             }
         }
 
-
+        // Methode om alle modules voor een level op te halen
         public List<Module> GetModulesForLevel(int levelId)
         {
             List<Module> modules = new List<Module>();
@@ -151,6 +269,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
             return modules;
         }
 
+        // Methode om module op te halen op basis van moduleID
         public Module GetModuleById(int moduleId)
         {
             Module module = null;
@@ -190,17 +309,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
             return module;
         }
 
-        public static string HashWachtwoord(string wachtwoord, string salt)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                // Combine the password and salt before hashing
-                string saltedPassword = wachtwoord + salt;
-                byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
-                return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
-            }
-        }
-
+        // Methode om gebruikers progressie op te halen
         public int GetProgressForLevel(int userId, int levelId)
         {
             int progressPercentage = 0;
@@ -246,78 +355,14 @@ namespace TypecursusApplicatie.Data_Access_Layer
             return progressPercentage;
         }
 
-
-        public void AddGebruiker(Gebruiker nieuweGebruiker)
-        {
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
-            {
-                var salt = Guid.NewGuid().ToString();
-                var hashedPassword = HashWachtwoord(nieuweGebruiker.Wachtwoord, salt);
-
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO Gebruikers (Voornaam, Achternaam, Emailadres, Wachtwoord, Salt) VALUES (@Voornaam, @Achternaam, @Emailadres, @Wachtwoord, @Salt)", conn);
-
-                cmd.Parameters.AddWithValue("@Voornaam", nieuweGebruiker.Voornaam);
-                cmd.Parameters.AddWithValue("@Achternaam", nieuweGebruiker.Achternaam);
-                cmd.Parameters.AddWithValue("@Emailadres", nieuweGebruiker.Emailadres);
-                cmd.Parameters.AddWithValue("@Wachtwoord", hashedPassword);
-                cmd.Parameters.AddWithValue("@Salt", salt);
-
-                try
-                {
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Fout bij het registreren van de gebruiker: " + ex.Message);
-                }
-            }
-        }
-
-        public Gebruiker GetGebruikerByEmail(string email)
-        {
-            Gebruiker gebruiker = null;
-
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
-            {
-                MySqlCommand cmd = new MySqlCommand("SELECT * FROM Gebruikers WHERE Emailadres = @Emailadres", conn);
-                cmd.Parameters.AddWithValue("@Emailadres", email);
-
-                try
-                {
-                    conn.Open();
-                    MySqlDataReader reader = cmd.ExecuteReader();
-
-                    if (reader.Read())
-                    {
-                        gebruiker = new Gebruiker
-                        {
-                            GebruikersID = Convert.ToInt32(reader["GebruikersID"]),
-                            Voornaam = reader["Voornaam"].ToString(),
-                            Achternaam = reader["Achternaam"].ToString(),
-                            Emailadres = reader["Emailadres"].ToString(),
-                            Salt = reader["Salt"].ToString(),
-                            Wachtwoord = reader["Wachtwoord"].ToString()
-                        };
-                    }
-                    reader.Close();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Fout bij het ophalen van de gebruiker: " + ex.Message);
-                }
-            }
-
-            return gebruiker;
-        }
-
+        // Methode om gebruiker progressie bij te werken
         public void UpdateUserProgress(int userId, int moduleId, bool isModuleCompleted)
         {
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
                 conn.Open();
 
-                // Check if a record already exists
+                // Controleert of er al een record bestaat voor de gebruiker en module
                 string checkQuery = "SELECT COUNT(1) FROM GebruikersVoortgang WHERE GebruikersID = @UserId AND ModuleID = @ModuleId";
                 MySqlCommand checkCmd = new MySqlCommand(checkQuery, conn);
                 checkCmd.Parameters.AddWithValue("@UserId", userId);
@@ -328,12 +373,12 @@ namespace TypecursusApplicatie.Data_Access_Layer
                 
                 if (recordExists > 0)
                 {
-                    // Update existing record
+                    // Werkt het bestaande record bij
                     query = "UPDATE GebruikersVoortgang SET ModuleVoltooid = @IsModuleCompleted, VoltooiDatum = NOW() WHERE GebruikersID = @UserId AND ModuleID = @ModuleId";
                 }
                 else
                 {
-                    // Insert new record
+                    // voegt een nieuw record toe
                     query = "INSERT INTO GebruikersVoortgang (GebruikersID, ModuleID, ModuleVoltooid, VoltooiDatum) VALUES (@UserId, @ModuleId, @IsModuleCompleted, NOW())";
                 }
 
@@ -353,6 +398,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
             }
         }
 
+        // Methode om te controleren of een module voltooid is
         public bool IsModuleCompleted(int userId, int moduleId)
         {
             using (MySqlConnection conn = new MySqlConnection(connectionString))
@@ -376,9 +422,10 @@ namespace TypecursusApplicatie.Data_Access_Layer
                     Console.WriteLine("Error in IsModuleCompleted: " + ex.Message);
                 }
             }
-            return false; // Default to false if no record found or in case of an exception
+            return false;
         }
 
+        // Methode om de wpm van een gebruiker op te halen
         public (List<double> Values, List<string> TimeLabels) GetWpmDataForUser(int userId)
         {
             List<double> values = new List<double>();
@@ -411,41 +458,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
             return (values, timeLabels);
         }
 
-        public Gebruiker GetGebruikerById(int userId)
-        {
-            Gebruiker gebruiker = null;
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
-            {
-                string query = "SELECT * FROM Gebruikers WHERE GebruikersID = @UserId";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@UserId", userId);
-
-                try
-                {
-                    conn.Open();
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            gebruiker = new Gebruiker
-                            {
-                                GebruikersID = Convert.ToInt32(reader["GebruikersID"]),
-                                Voornaam = reader["Voornaam"].ToString(),
-                                Achternaam = reader["Achternaam"].ToString(),
-                                Emailadres = reader["Emailadres"].ToString(),
-                                // Other fields if necessary
-                            };
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error in GetGebruikerById: " + ex.Message);
-                }
-            }
-            return gebruiker;
-        }
-
+        // Een IEnumerable om alle modulepogingen van een gebruiker op te halen dit is zo ingesteld omdat er meerdere pogingen kunnen zijn
         public IEnumerable<ModulePogingen> GetModulePogingenByUserId(int userId)
         {
             List<ModulePogingen> pogingen = new List<ModulePogingen>();
@@ -470,7 +483,6 @@ namespace TypecursusApplicatie.Data_Access_Layer
                                 GebruikersWPM = Convert.ToInt32(reader["GebruikersWPM"]),
                                 GebruikersNauwkeurigheid = Convert.ToInt32(reader["GebruikersNauwkeurigheid"]),
                                 PogingDatum = Convert.ToDateTime(reader["PogingDatum"])
-                                // Other fields if necessary
                             });
                         }
                     }
@@ -483,6 +495,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
             return pogingen;
         }
 
+        // Methode om de telling van voltooide modules op te halen
         public int GetCompletedLevelsCount(int userId)
         {
             int completedLevelsCount = 0;
@@ -509,6 +522,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
             return completedLevelsCount;
         }
 
+        // Methode om alle voltooide modules op te halen voor een gebruiker
         public int GetCompletedModulesByUserId(int userId)
         {
             using (var conn = new MySqlConnection(connectionString))
@@ -523,6 +537,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
             }
         }
 
+        // Methode om de badges telling op te halen voor een gebruiker
         public int GetEarnedBadgesCountByUserId(int userId)
         {
             using (var conn = new MySqlConnection(connectionString))
@@ -537,6 +552,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
             }
         }
 
+        // Methode om alle badges op te halen uit de database
         public List<Badge> GetAllBadges()
         {
             List<Badge> badges = new List<Badge>();
@@ -570,7 +586,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
             return badges;
         }
 
-
+        // Methode om alle badges op te halen voor een gebruiker
         public List<Badge> GetBadgesByUserId(int userId)
         {
             List<Badge> badges = new List<Badge>();
@@ -594,7 +610,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
                                 Criteria = reader["Criteria"].ToString(),
                                 BadgeAfbeelding = (byte[])reader["BadgeAfbeelding"],
                                 BadgeBeschrijving = reader["BadgeBeschrijving"].ToString(),
-                                IsUnlocked = true, // Since it's coming from GebruikersBadges, it's unlocked
+                                IsUnlocked = true,
                                 BadgeBehaalDatum = reader.IsDBNull(reader.GetOrdinal("BadgeBehaalDatum")) ? (DateTime?)null : reader.GetDateTime(reader.GetOrdinal("BadgeBehaalDatum"))
                             });
                         }
@@ -608,6 +624,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
             return badges;
         }
 
+        // Methode om een badge toe te voegen aan een gebruiker
         public void AddBadgeToUser(int userId, int badgeId)
         {             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
@@ -628,6 +645,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
             }
         }
 
+        // Methode om alle badges op te halen voor een gebruiker
         public List<Badge> GetBadgesForUser(int userId)
         {
             // Implementation for getting badges for a user
@@ -650,7 +668,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
                                 Criteria = reader["Criteria"].ToString(),
                                 BadgeAfbeelding = (byte[])reader["BadgeAfbeelding"],
                                 BadgeBeschrijving = reader["BadgeBeschrijving"].ToString(),
-                                IsUnlocked = false // Default to false
+                                IsUnlocked = false
                             });
                         }
                     }
@@ -663,13 +681,14 @@ namespace TypecursusApplicatie.Data_Access_Layer
             return badges;
         }
 
+        // Methode om de laatste prestatie van een gebruiker op te halen
         public UserPerformance GetLatestPerformanceForUser(int userId)
         {
             UserPerformance performance = new UserPerformance();
 
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
-                // Query to get average WPM and Accuracy
+                // Query om de WPM en Accuracy op te halen
                 string wpmAccuracyQuery = @"
             SELECT AVG(GebruikersWPM) AS AvgWPM, AVG(GebruikersNauwkeurigheid) AS AvgAccuracy 
             FROM ModulePogingen 
@@ -677,7 +696,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
                 MySqlCommand wpmAccuracyCmd = new MySqlCommand(wpmAccuracyQuery, conn);
                 wpmAccuracyCmd.Parameters.AddWithValue("@UserId", userId);
 
-                // Query to get levels completed
+                // Query om alle voltooide levels op te halen
                 string levelsCompletedQuery = @"
             SELECT COUNT(DISTINCT LevelID) AS LevelsCompleted
             FROM Modules 
@@ -686,7 +705,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
                 MySqlCommand levelsCompletedCmd = new MySqlCommand(levelsCompletedQuery, conn);
                 levelsCompletedCmd.Parameters.AddWithValue("@UserId", userId);
 
-                // Query to check if all badges are earned
+                // Query om te controleren of alle badges zijn behaald
                 string allBadgesQuery = @"
             SELECT (SELECT COUNT(*) FROM Badges) AS TotalBadges, 
                    (SELECT COUNT(DISTINCT BadgeID) FROM GebruikersBadges WHERE GebruikersID = @UserId) AS EarnedBadges";
@@ -697,7 +716,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
                 {
                     conn.Open();
 
-                    // Execute WPM and Accuracy query
+                    // Voert de WPM en Accuracy query uit
                     using (var reader = wpmAccuracyCmd.ExecuteReader())
                     {
                         if (reader.Read())
@@ -707,11 +726,11 @@ namespace TypecursusApplicatie.Data_Access_Layer
                         }
                     }
 
-                    // Execute Levels Completed query
+                    // Voert de Levels Completed query uit
                     levelsCompletedCmd.ExecuteNonQuery();
                     performance.LevelsCompleted = Convert.ToInt32(levelsCompletedCmd.ExecuteScalar());
 
-                    // Execute All Badges Earned query
+                    // Voert de All Badges query uit
                     using (var reader = allBadgesCmd.ExecuteReader())
                     {
                         if (reader.Read())
@@ -731,9 +750,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
             return performance;
         }
 
-
-
-
+        // Methode om te controleren of een badge is toegekend aan een gebruiker
         public bool IsBadgeAwardedToUser(int userId, int badgeId)
         {
             using (MySqlConnection conn = new MySqlConnection(connectionString))
@@ -756,15 +773,11 @@ namespace TypecursusApplicatie.Data_Access_Layer
                 }
             }
         }
-
-
-
-
-
     }
+
+    // Een klasse om de prestaties van een gebruiker bij te houden
     public class UserPerformance
     {
-        // Define relevant properties
         public int PogingID { get; set; }
         public int GebruikersID { get; set; }
         public int ModuleID { get; set; }
@@ -775,8 +788,7 @@ namespace TypecursusApplicatie.Data_Access_Layer
         public double WPM { get; set; }
         public int UserId { get; set; }
         public double Accuracy { get; set; }
-        public int LevelsCompleted { get; set; } // Total number of levels completed by the user
-        public bool AllBadgesEarned { get; set; } // Indicates if all badges are earned
-
+        public int LevelsCompleted { get; set; }
+        public bool AllBadgesEarned { get; set; } 
     }
 }

@@ -42,12 +42,12 @@ namespace TypecursusApplicatie
 
             LoadStatistiekenData();
         }
-
+        
+        // Methode die alle statistieken van de gebruiker laadt
         private void LoadStatistiekenData()
         {
             if (!UserSession.IsLoggedIn())
             {
-                // Handle the case when the user is not logged in
                 return;
             }
 
@@ -55,31 +55,25 @@ namespace TypecursusApplicatie
             var gebruiker = gebruikerDAL.GetGebruikerById(userId);
             if (gebruiker == null)
             {
-                // Handle user not found scenario
                 return;
             }
 
-            // Populate user details in UI
             VoornaamTextBlock.Text = gebruiker.Voornaam;
             AchternaamTextBlock.Text = gebruiker.Achternaam;
             EmailadresTextBlock.Text = gebruiker.Emailadres;
 
             var modulePogingen = gebruikerDAL.GetModulePogingenByUserId(userId);
-            LoadWpmChartData(modulePogingen); // Pass the list to the method
+            LoadWpmChartData(modulePogingen); 
 
-            // Load completed modules count
             var completedModules = gebruikerDAL.GetCompletedModulesByUserId(userId);
             CompletedModulesCount.Text = completedModules.ToString();
 
-            // Load earned badges count
             var earnedBadges = gebruikerDAL.GetEarnedBadgesCountByUserId(userId);
             CompletedLevelsCount.Text = earnedBadges.ToString();
 
-            // Load module completion data
             int completedModulesCount = gebruikerDAL.GetCompletedModulesByUserId(userId);
             CompletedModulesCount.Text = completedModulesCount.ToString();
 
-            // Load badge data
             int earnedBadgesCount = gebruikerDAL.GetEarnedBadgesCountByUserId(userId);
             CompletedLevelsCount.Text = earnedBadgesCount.ToString();
 
@@ -89,20 +83,20 @@ namespace TypecursusApplicatie
 
         }
 
-        private int dataPointDisplayRange = 20; // Number of points to display at once
-        private int currentDataPointStartIndex = 0; // Starting index for the displayed data points
+        private int dataPointDisplayRange = 20; // Aantal datapunten dat tegelijkertijd wordt weergegeven
+        private int currentDataPointStartIndex = 0;  // Index van het eerste datapunt dat wordt weergegeven
 
         private void LoadWpmChartData(IEnumerable<ModulePogingen> pogingen)
         {
             var sortedPogingen = pogingen.Where(p => p.GebruikersWPM > 0)
-                                         .OrderByDescending(p => p.PogingDatum) // Changed to OrderByDescending
+                                         .OrderByDescending(p => p.PogingDatum) 
                                          .ToList();
             this.pogingen = sortedPogingen;
 
             UpdateVisibleDataPoints();
         }
 
-
+        // Methode die de grafiek van de WPM laadt
         private void UpdateVisibleDataPoints()
         {
             int endIndex = Math.Min(currentDataPointStartIndex + dataPointDisplayRange, pogingen.Count);
@@ -110,11 +104,10 @@ namespace TypecursusApplicatie
 
             var chartValues = new ChartValues<double>(visiblePogingen.Select(p => (double)p.GebruikersWPM));
 
-            // Combine date and time for labels
             var combinedLabels = visiblePogingen.Select(p => p.PogingDatum.ToString("dd-MM-yyyy HH:mm")).ToList();
 
             WpmSeries = new SeriesCollection
-    {
+        {
         new LineSeries
         {
             Values = chartValues,
@@ -124,13 +117,13 @@ namespace TypecursusApplicatie
             PointGeometry = DefaultGeometries.Circle,
             PointGeometrySize = 10
         }
-    };
+        };
 
             WpmChart.Series = WpmSeries;
-            WpmChart.AxisX.First().Labels = combinedLabels; // Assigning combined date and time labels
+            WpmChart.AxisX.First().Labels = combinedLabels;
         }
 
-
+        // Methodes voor de knoppen van de grafiek
         private void PreviousDataPointsButton_Click(object sender, RoutedEventArgs e)
         {
             currentDataPointStartIndex = Math.Max(0, currentDataPointStartIndex - dataPointDisplayRange);
@@ -144,9 +137,7 @@ namespace TypecursusApplicatie
         }
 
 
-
-
-        // The rest of your event handlers and methods should go here
+        // De event handlers voor de sidebar en logo
 
         private void Homepagina_Loaded(object sender, RoutedEventArgs e)
         {
@@ -217,7 +208,6 @@ namespace TypecursusApplicatie
             }
             else
             {
-                // Reset the selection if the level is locked
                 comboBox.SelectedIndex = -1;
             }
         }

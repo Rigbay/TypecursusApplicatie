@@ -32,6 +32,7 @@ namespace TypecursusApplicatie
             this.DataContext = mainWindow;
         }
 
+        // Event handlers voor de sidebar en logo
 
         private void Homepagina_Loaded(object sender, RoutedEventArgs e)
         {

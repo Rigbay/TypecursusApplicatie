@@ -9,6 +9,7 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:local="clr-namespace:TypecursusApplicatie">
 
+    <!-- De usercontrols voor de statistiekenpagina-->
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
         <local:BooleanToInverseVisibilityConverter x:Key="BoolToInverseVisConverter"/>
@@ -45,8 +46,8 @@
         </Style>
     </UserControl.Resources>
 
+    <!-- De topbar en zijbalk-->
     <DockPanel LastChildFill="True">
-        <!-- Header -->
         <Border DockPanel.Dock="Top" Background="Gray" Height="60">
             <DockPanel HorizontalAlignment="Stretch">
                 <ToggleButton x:Name="SidebarToggle" Content="☰" Width="60" Height="60" DockPanel.Dock="Left" Click="SidebarToggle_Click"/>
@@ -56,7 +57,6 @@
             </DockPanel>
         </Border>
 
-        <!-- Sidebar -->
         <DockPanel x:Name="Sidebar" DockPanel.Dock="Left" Background="Gray" Width="0">
             <StackPanel DockPanel.Dock="Top">
                 <Button Content="Home" Style="{StaticResource SidebarButtonStyle}" Click="HomeButton_Click" Width="100" HorizontalAlignment="Center"/>
@@ -86,16 +86,12 @@
             </StackPanel>
         </DockPanel>
 
-        <!-- Main Content Area -->
         <Grid DockPanel.Dock="Top" Margin="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
-                <!-- User info takes one-third of space -->
                 <ColumnDefinition Width="3*"/>
-                <!-- Graph takes two-thirds of space -->
             </Grid.ColumnDefinitions>
 
-            <!-- User Information Section -->
             <Border Grid.Column="0" BorderBrush="Black" BorderThickness="1" Padding="10" Margin="10">
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="Naam:" FontSize="16" FontWeight="Bold" Margin="5"/>
@@ -119,25 +115,21 @@
 
 
 
-            <!-- Graph Section -->
             <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" Padding="10" Margin="10">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
-                        <!-- Navigation buttons row -->
                         <RowDefinition Height="*"/>
-                        <!-- Graph row -->
                     </Grid.RowDefinitions>
 
-                    <!-- Navigation Buttons -->
+                    <!-- De Statistiekenpagina -->
+                    
                     <DockPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,10">
                         <Button Content="&lt;" Width="40" Height="40" Click="PreviousDataPointsButton_Click"/>
                         <Button Content="&gt;" Width="40" Height="40" Click="NextDataPointsButton_Click" Margin="10,0,0,0"/>
                     </DockPanel>
 
-                    <!-- Cartesian Chart -->
                     <lvc:CartesianChart Grid.Row="1" x:Name="WpmChart" Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <!-- Chart configuration as per the original working graph -->
                         <lvc:CartesianChart.Series>
                             <lvc:LineSeries Title="WPM" Values="{Binding ChartValues}" PointGeometrySize="10"/>
                         </lvc:CartesianChart.Series>

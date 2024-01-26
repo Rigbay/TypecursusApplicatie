@@ -8,6 +8,7 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:local="clr-namespace:TypecursusApplicatie">
 
+    <!-- De usercontrols voor de homepagina-->
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
         <local:BooleanToInverseVisibilityConverter x:Key="BoolToInverseVisConverter"/>
@@ -43,6 +44,7 @@
         </Style>
     </UserControl.Resources>
 
+    <!-- Topbar en zijbalk -->
     <DockPanel>
         <Border DockPanel.Dock="Top" Background="Gray" Height="60">
             <DockPanel HorizontalAlignment="Stretch">
@@ -95,6 +97,7 @@
             </StackPanel>
         </DockPanel>
         
+        <!-- Homepagina -->
         <StackPanel 
             VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock Text="Homepagina" FontSize="36" FontWeight="Bold" Margin="0,-80,0,120" HorizontalAlignment="Center" VerticalAlignment="Top"/>

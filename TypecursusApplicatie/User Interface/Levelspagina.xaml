@@ -9,6 +9,7 @@
              xmlns:local="clr-namespace:TypecursusApplicatie"
              Loaded="UserControl_Loaded">
 
+    <!-- De usercontrols voor de levelspagina-->
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
         <local:BooleanToInverseVisibilityConverter x:Key="BoolToInverseVisConverter"/>
@@ -45,6 +46,7 @@
 
     </UserControl.Resources>
 
+    <!-- Topbar en zijbalk -->
     <DockPanel>
         <Border DockPanel.Dock="Top" Background="Gray" Height="60">
             <DockPanel HorizontalAlignment="Stretch">
@@ -109,12 +111,13 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
+            <!-- De levelspagina -->
+            
             <TextBlock Grid.Row="0" Text="Levelspagina" FontSize="36" FontWeight="Bold" Margin="0,-40,0,120" HorizontalAlignment="Center" VerticalAlignment="Top"/>
 
             <ItemsControl x:Name="LevelsItemsControl" Grid.Row="1" ItemsSource="{Binding Levels}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <!-- UniformGrid met 4 kolommen en 2 rijen -->
                         <UniformGrid Columns="4" Rows="2"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
@@ -128,15 +131,11 @@
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="3*"/>
-                                                <!-- Top half -->
                                                 <RowDefinition Height="2*"/>
-                                                <!-- Bottom half -->
                                             </Grid.RowDefinitions>
 
-                                            <!-- Level Title -->
                                             <TextBlock Text="{Binding LevelNaam}" FontWeight="Bold" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Margin="10"/>
 
-                                            <!-- Lock Icon and Progress Bar -->
                                             <StackPanel Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Center">
                                                 <Image Source="/Images/lock-icon-2.png" Visibility="{Binding IsUnlocked, Converter={StaticResource BoolToInverseVisConverter}}" Width="80" Height="80" VerticalAlignment="Top"  Margin="0,-25,0,0"/>
                                                 <ProgressBar Minimum="0" Maximum="100" Value="{Binding ProgressPercentage}" Width="200" Height="20" Visibility="{Binding IsUnlocked, Converter={StaticResource BoolToVisConverter}}"/>
